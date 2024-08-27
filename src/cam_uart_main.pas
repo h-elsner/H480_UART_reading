@@ -212,6 +212,7 @@ type
     procedure btnDelLMClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure gridDataGetCellHint(Sender: TObject; ACol, ARow: Integer;
       var HintText: String);
     procedure gridDataPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
@@ -1611,6 +1612,17 @@ begin
   btnReLoad.Enabled:=false;
   randomize;
   gridRaw.AlternateColor:=clGridHighlightRows;
+end;
+
+procedure TForm1.FormDropFiles(Sender: TObject; const FileNames: array of string);
+var
+  i: integer;
+
+begin
+  OpenDialog.Files.Clear;
+  for i:=0 to high(filenames) do
+    OpenDialog.Files.Add(FileNames[i]);
+  DecodeUART;
 end;
 
 procedure TForm1.gridDataGetCellHint(Sender: TObject; ACol, ARow: Integer;
