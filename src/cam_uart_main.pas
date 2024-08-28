@@ -110,6 +110,7 @@ type
     acHexView: TAction;
     acGoFilter: TAction;
     acReLoad: TAction;
+    acProtocol: TAction;
     ActionList1: TActionList;
     btnBack: TBitBtn;
     btnReload: TBitBtn;
@@ -121,12 +122,14 @@ type
     btnSaveRaw: TButton;
     btnSaveData: TButton;
     btnClearRed: TButton;
+    btnSaveProto: TButton;
     cbAutoSave: TCheckBox;
     cbOrOther: TCheckBox;
     cbDocu: TCheckBox;
     Chart1: TChart;
     AutoScaleLeft: TAutoScaleAxisTransform;
     AutoScaleRight: TAutoScaleAxisTransform;
+    mnSaveProto: TMenuItem;
     mnDoChartRight: TMenuItem;
     serLeft: TLineSeries;
     serRight: TLineSeries;
@@ -136,7 +139,7 @@ type
     edLength: TEdit;
     edOther: TEdit;
     edSumMsgID: TEdit;
-    edSumMsgTypes: TEdit;
+    edSumMsgType: TEdit;
     gbFilter: TGroupBox;
     gbOtherMsgID: TGroupBox;
     gbSR24Filter: TGroupBox;
@@ -153,7 +156,7 @@ type
     lbMsgID: TListBox;
     lbMsgType: TListBox;
     lbNumMsgID: TListBox;
-    lbNumMsgTypes: TListBox;
+    lbNumMsgType: TListBox;
     lbSensorType: TListBox;
     mnGoFilter: TMenuItem;
     mnMain: TMainMenu;
@@ -202,6 +205,7 @@ type
     procedure acGoFilterExecute(Sender: TObject);
     procedure acHexViewExecute(Sender: TObject);
     procedure acDecodeUARTExecute(Sender: TObject);
+    procedure acProtocolExecute(Sender: TObject);
     procedure acReLoadExecute(Sender: TObject);
     procedure acResetAllExecute(Sender: TObject);
     procedure acSaveDataExecute(Sender: TObject);
@@ -1622,6 +1626,7 @@ begin
   OpenDialog.Files.Clear;
   for i:=0 to high(filenames) do
     OpenDialog.Files.Add(FileNames[i]);
+  OpenDialog.FileName:=FileNames[0];
   DecodeUART;
 end;
 
@@ -1757,6 +1762,17 @@ begin
     lblTarget.Caption:=capTarget;
 end;
 
+procedure TForm1.btnBackClick(Sender: TObject);
+begin
+  PageControl1.ActivePage:=tsData;
+end;
+
+procedure TForm1.btnClearRedClick(Sender: TObject);
+begin
+   serRight.Clear;
+end;
+
+
 ///////////////////////////// Actions ///////////////////////////////////
 
 procedure TForm1.acCloseExecute(Sender: TObject);
@@ -1831,14 +1847,57 @@ begin
   end;
 end;
 
-procedure TForm1.btnBackClick(Sender: TObject);
-begin
-  PageControl1.ActivePage:=tsData;
-end;
+procedure TForm1.acProtocolExecute(Sender: TObject);
+const
+  trenner=' - ';
+  spacer='       ';
 
-procedure TForm1.btnClearRedClick(Sender: TObject);
+var
+  i: integer;
+  list: TStringList;
+
 begin
-   serRight.Clear;
+  list:=TStringList.Create;
+  try
+    list.Add('Statistics');
+    list.Add('==========');
+    list.Add('Date/time:   '+FormatDateTime('yyyy-mm-dd hh:nn:ss', now));
+    list.Add('File name:   '+OpenDialog.FileName+'   (...and maybe more)');
+    if StatusBar1.Panels[5].Text<>'' then
+      list.Add('System time: '+StatusBar1.Panels[5].Text);
+    list.Add('');
+    list.Add('');
+
+    if lbMsgType.Items.Count>0 then begin
+      list.Add('SR24 : Messages'+trenner+'message counter');
+      for i:=0 to lbMsgType.Items.Count-1 do
+        list.Add(lbMsgType.Items[i]+trenner+lbNumMsgType.Items[i]);
+      if lbActionType.Items.Count>0 then begin
+        list.Add(spacer+'Action types');
+        for i:=0 to lbActionType.Items.Count-1 do
+          list.Add(spacer+lbActionType.Items[i]);;
+      end;
+    end;
+    list.Add('');
+    list.Add('');
+
+    if lbMsgType.Items.Count>0 then begin
+      list.Add('CGO3+: Messages - message counter');
+      for i:=0 to lbMsgID.Items.Count-1 do
+        list.Add(lbMsgID.Items[i]+' - '+lbNumMsgID.Items[i]);
+      if lbSensorType.Items.Count>0 then begin
+        list.Add(spacer+'Sensor message types');
+        for i:=0 to lbSensorType.Items.Count-1 do
+          list.Add(spacer+lbSensorType.Items[i]);;
+      end;
+    end;
+
+    SaveDialog.FileName:=ChangeFileExt(OpenDialog.FileName, '')+'_protocol.txt';
+    list.SaveToFile(SaveDialog.FileName);
+    StatusBar1.Panels[4].Text:=rsSaved+SaveDialog.FileName;
+  finally
+    list.Free;
+  end;
 end;
 
 procedure TForm1.acDecodeUARTExecute(Sender: TObject);
@@ -1936,6 +1995,15 @@ begin
   actiontypelist.Duplicates:=dupIgnore;
   sensortypelist.Sorted:=true;
   sensortypelist.Duplicates:=dupIgnore;
+  lbMsgID.Items.Clear;
+  lbNumMsgID.Items.Clear;
+  edSumMsgID.Text:='';
+  lbMsgType.Items.Clear;
+  lbNumMsgType.Items.Clear;
+  edSumMsgType.Text:='';
+  lbActionType.Items.Clear;
+  lbSensorType.Items.Clear;
+
 
   Screen.Cursor:=crHourGlass;
   MaxColumns:=NumPayloadBytes+lenfix;
@@ -1997,8 +2065,8 @@ begin
       edSumMsgID.Text:=IntToStr(msgsum);
     end;
 
-    lbNumMsgTypes.Items.Clear;
-    edSumMsgTypes.Text:='';
+    lbNumMsgType.Items.Clear;
+    edSumMsgType.Text:='';
     if msgTypelist.Count>0 then begin
       actiontypelist.Clear;
       msgsum:=0;
@@ -2007,14 +2075,14 @@ begin
       FillMsgList(actiontypelist, lbMsgType, 1);
       for k:=0 to actiontypelist.Count-1 do begin
         msgcounter:=0;
-        lbNumMsgTypes.Items.Add('');
+        lbNumMsgType.Items.Add('');
         for i:=0 to msgtypelist.Count-1 do                    {Count messages per ID}
           if msgtypelist[i]=actiontypelist[k] then
             inc(msgcounter);
         msgsum:=msgsum+msgcounter;
-        lbNumMsgTypes.Items[k]:=IntToStr(msgcounter);
+        lbNumMsgType.Items[k]:=IntToStr(msgcounter);
       end;
-      edSumMsgTypes.Text:=IntToStr(msgsum);
+      edSumMsgType.Text:=IntToStr(msgsum);
     end;
 
     if cbAutoSave.Checked then begin                       {Autosave merged lists}
@@ -2042,7 +2110,6 @@ begin
     Screen.Cursor:=crDefault;
   end;
 end;
-
 
 end.
 

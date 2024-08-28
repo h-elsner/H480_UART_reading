@@ -1,10 +1,10 @@
 object Form1: TForm1
-  Left = 1834
-  Height = 871
+  Left = 1832
+  Height = 850
   Top = 149
   Width = 1136
   AllowDropFiles = True
-  ClientHeight = 871
+  ClientHeight = 850
   ClientWidth = 1136
   Constraints.MinHeight = 450
   Constraints.MinWidth = 830
@@ -62,7 +62,7 @@ object Form1: TForm1
   object StatusBar1: TStatusBar
     Left = 0
     Height = 18
-    Top = 853
+    Top = 832
     Width = 1136
     Panels = <    
       item
@@ -87,20 +87,20 @@ object Form1: TForm1
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 781
+    Height = 760
     Top = 72
     Width = 1136
-    ActivePage = tsChart
+    ActivePage = tsSettings
     Align = alClient
-    TabIndex = 3
+    TabIndex = 2
     TabOrder = 2
     object tsRaw: TTabSheet
       Caption = 'Raw'
-      ClientHeight = 751
+      ClientHeight = 730
       ClientWidth = 1126
       object gridRaw: TStringGrid
         Left = 0
-        Height = 751
+        Height = 730
         Top = 0
         Width = 1126
         Align = alClient
@@ -113,11 +113,11 @@ object Form1: TForm1
     end
     object tsData: TTabSheet
       Caption = 'Data'
-      ClientHeight = 751
+      ClientHeight = 730
       ClientWidth = 1126
       object gridData: TStringGrid
         Left = 0
-        Height = 751
+        Height = 730
         Top = 0
         Width = 1126
         Align = alClient
@@ -131,7 +131,7 @@ object Form1: TForm1
     end
     object tsSettings: TTabSheet
       Caption = 'Settings / Filter'
-      ClientHeight = 751
+      ClientHeight = 730
       ClientWidth = 1126
       object rgOutputFormat: TRadioGroup
         Left = 8
@@ -164,7 +164,7 @@ object Form1: TForm1
         Top = 16
         Width = 464
         Caption = 'Filter YMAVlink'
-        ClientHeight = 318
+        ClientHeight = 303
         ClientWidth = 462
         TabOrder = 1
         object rgMsgID: TRadioGroup
@@ -460,7 +460,7 @@ object Form1: TForm1
         TabOrder = 9
         TopIndex = -1
       end
-      object lbNumMsgTypes: TListBox
+      object lbNumMsgType: TListBox
         Left = 736
         Height = 144
         Top = 376
@@ -478,7 +478,7 @@ object Form1: TForm1
         TabOrder = 11
         TextHint = 'Total'
       end
-      object edSumMsgTypes: TEdit
+      object edSumMsgType: TEdit
         Left = 728
         Height = 28
         Top = 528
@@ -507,15 +507,15 @@ object Form1: TForm1
     end
     object tsChart: TTabSheet
       Caption = 'Chart'
-      ClientHeight = 751
+      ClientHeight = 730
       ClientWidth = 1126
       object panLeft: TPanel
         Left = 0
-        Height = 751
+        Height = 730
         Top = 0
         Width = 144
         Align = alLeft
-        ClientHeight = 751
+        ClientHeight = 730
         ClientWidth = 144
         TabOrder = 0
         object rgDataType: TRadioGroup
@@ -606,7 +606,7 @@ object Form1: TForm1
       end
       object Chart1: TChart
         Left = 144
-        Height = 751
+        Height = 730
         Top = 0
         Width = 982
         AxisList = <        
@@ -665,6 +665,14 @@ object Form1: TForm1
       end
     end
   end
+  object btnSaveProto: TButton
+    Left = 200
+    Height = 40
+    Top = 16
+    Width = 120
+    Action = acProtocol
+    TabOrder = 3
+  end
   object mnMain: TMainMenu
     Left = 24
     Top = 568
@@ -681,6 +689,9 @@ object Form1: TForm1
       end
       object mnSaveData: TMenuItem
         Action = acSaveData
+      end
+      object mnSaveProto: TMenuItem
+        Action = acProtocol
       end
       object Separator2: TMenuItem
         Caption = '-'
@@ -763,6 +774,10 @@ object Form1: TForm1
     object acReLoad: TAction
       Caption = 'Reload files'
       OnExecute = acReLoadExecute
+    end
+    object acProtocol: TAction
+      Caption = 'Save protocol'
+      OnExecute = acProtocolExecute
     end
   end
   object OpenDialog: TOpenDialog

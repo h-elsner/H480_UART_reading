@@ -152,7 +152,6 @@ begin
     4: result:='Remote';
     6: result:='SysID6';
     88: result:='Undef';
-    200: result:='Camera or gimbal';
   end;
 end;
 
