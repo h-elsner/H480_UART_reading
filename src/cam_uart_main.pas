@@ -1846,8 +1846,7 @@ begin
   OpenDialog.Title:=titMerge;
   OpenDialog.Options:=OpenDialog.Options+[ofAllowMultiSelect];
   if OpenDialog.Execute then begin
-    btnReLoad.Enabled:=true;;
-        DecodeUART;
+    DecodeUART;
   end;
 end;
 
@@ -1872,6 +1871,7 @@ var
     tp: string;
 
   begin
+    btnReLoad.Enabled:=true;;
     inlist.LoadFromFile(fn);
     lineindex:=1;
     StatusBar1.Panels[0].Text:=IntToStr(inlist.Count-1);
@@ -1901,6 +1901,7 @@ var
     tp: string;
 
   begin
+    btnReLoad.Enabled:=true;;
     inlist.LoadFromFile(fn);
     lineindex:=1;
     StatusBar1.Panels[0].Text:=IntToStr(inlist.Count-1);
