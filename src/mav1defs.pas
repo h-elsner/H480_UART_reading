@@ -152,6 +152,7 @@ begin
     4: result:='Remote';
     6: result:='SysID6';
     88: result:='Undef';
+    200: result:='Camera or gimbal';
   end;
 end;
 
@@ -177,6 +178,7 @@ begin
     2:   result:='System_Time';
     24:  result:='GPS_RAW_INT';
     33:  result:='GLOBAL_POSITION_INT';
+    51:  result:='Camera/Gimbal_status';
     178: result:='Home? (0xB2=178)';
   end;
 end;
