@@ -1840,7 +1840,7 @@ begin
   if gridRaw.Cells[0, 0]=rsAdr then
     SaveDialog.FileName:=ChangeFileExt(OpenDialog.FileName, '')+'_HexView'+csvext
   else
-    SaveDialog.FileName:=ChangeFileExt(OpenDialog.FileName, '')+'_Messages'+FilenameProposal;
+    SaveDialog.FileName:=ChangeFileExt(OpenDialog.FileName, '')+'_Raw'+FilenameProposal;
   if SaveDialog.Execute then begin
     gridRaw.SaveToCSVFile(SaveDialog.FileName, dtsep);
     StatusBar1.Panels[4].Text:=rsSaved+SaveDialog.FileName;
@@ -1877,11 +1877,11 @@ begin
         for i:=0 to lbActionType.Items.Count-1 do
           list.Add(spacer+lbActionType.Items[i]);;
       end;
+      list.Add('');
+      list.Add('');
     end;
-    list.Add('');
-    list.Add('');
 
-    if lbMsgType.Items.Count>0 then begin
+    if lbMsgID.Items.Count>0 then begin
       list.Add('CGO3+: Messages - message counter');
       for i:=0 to lbMsgID.Items.Count-1 do
         list.Add(lbMsgID.Items[i]+' - '+lbNumMsgID.Items[i]);
@@ -1891,6 +1891,7 @@ begin
           list.Add(spacer+lbSensorType.Items[i]);;
       end;
     end;
+    list.Add('');
 
     SaveDialog.FileName:=ChangeFileExt(OpenDialog.FileName, '')+'_protocol.txt';
     list.SaveToFile(SaveDialog.FileName);
