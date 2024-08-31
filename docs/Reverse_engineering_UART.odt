@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:rpt="http://openoffice.org/2005/report" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><dc:date>2024-08-26T17:35:09.809266414</dc:date><meta:editing-duration>PT54M14S</meta:editing-duration><meta:editing-cycles>15</meta:editing-cycles><meta:generator>LibreOffice/24.2.5.2$Linux_X86_64 LibreOffice_project/420$Build-2</meta:generator><meta:print-date>2023-09-12T14:54:54.707545106</meta:print-date><meta:document-statistic meta:table-count="1" meta:image-count="3" meta:object-count="0" meta:page-count="3" meta:paragraph-count="52" meta:word-count="494" meta:character-count="3075" meta:non-whitespace-character-count="2631"/></office:meta>
+ <office:meta><dc:date>2024-08-28T23:10:05.191704735</dc:date><meta:editing-duration>PT1H47M11S</meta:editing-duration><meta:editing-cycles>25</meta:editing-cycles><meta:generator>LibreOffice/24.2.5.2$Linux_X86_64 LibreOffice_project/420$Build-2</meta:generator><meta:print-date>2023-09-12T14:54:54.707545106</meta:print-date><meta:document-statistic meta:table-count="2" meta:image-count="3" meta:object-count="0" meta:page-count="4" meta:paragraph-count="64" meta:word-count="775" meta:character-count="4844" meta:non-whitespace-character-count="4069"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">63153</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">90071</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">27372</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">22742</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">27430</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">22800</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">5232</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">32404</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">10294</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">108530</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">63153</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">27370</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">85893</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">90071</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">27428</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">112869</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">1</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
      <config:config-item config:name="ZoomFactor" config:type="short">180</config:config-item>
-     <config:config-item config:name="IsSelectedFrame" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsSelectedFrame" config:type="boolean">false</config:config-item>
      <config:config-item config:name="KeepRatio" config:type="boolean">false</config:config-item>
      <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
      <config:config-item config:name="LegacySingleLineFontwork" config:type="boolean">false</config:config-item>
@@ -43,6 +43,7 @@
    <config:config-item config:name="PrintEmptyPages" config:type="boolean">true</config:config-item>
    <config:config-item config:name="PrintGraphics" config:type="boolean">true</config:config-item>
    <config:config-item config:name="NoNumberingShowFollowBy" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="DoNotBreakWrappedTables" config:type="boolean">true</config:config-item>
    <config:config-item config:name="HyphenateURLs" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ImagePreferredDPI" config:type="int">0</config:config-item>
    <config:config-item config:name="FootnoteInColumnToPageEnd" config:type="boolean">true</config:config-item>
@@ -55,7 +56,7 @@
    <config:config-item config:name="TreatSingleColumnBreakAsPageBreak" config:type="boolean">false</config:config-item>
    <config:config-item config:name="TabOverSpacing" config:type="boolean">false</config:config-item>
    <config:config-item config:name="AutoFirstLineIndentDisregardLineSpace" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="TabOverMargin" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="TabOverMargin" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbedComplexScriptFonts" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbedAsianScriptFonts" config:type="boolean">true</config:config-item>
    <config:config-item config:name="PrintTextPlaceholder" config:type="boolean">false</config:config-item>
@@ -66,11 +67,11 @@
    <config:config-item config:name="BackgroundParaOverDrawings" config:type="boolean">false</config:config-item>
    <config:config-item config:name="TabOverflow" config:type="boolean">true</config:config-item>
    <config:config-item config:name="AllowPrintJobCancel" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="AddVerticalFrameOffsets" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="AddVerticalFrameOffsets" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ProtectBookmarks" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="AddFrameOffsets" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="AddFrameOffsets" config:type="boolean">true</config:config-item>
    <config:config-item config:name="PrintBlackFonts" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="TableRowKeep" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ApplyParagraphMarkFormatToNumbering" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterIndependentLayout" config:type="string">high-resolution</config:config-item>
    <config:config-item config:name="JustifyLinesWithShrinking" config:type="boolean">false</config:config-item>
@@ -138,10 +139,10 @@
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="RedlineProtectionKey" config:type="base64Binary"/>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="Rsid" config:type="int">1264231</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">1750810</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ProtectForm" config:type="boolean">false</config:config-item>
-   <config:config-item config:name="MsWordCompMinLineHeightByFly" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="MsWordCompMinLineHeightByFly" config:type="boolean">true</config:config-item>
    <config:config-item config:name="SmallCapsPercentage66" config:type="boolean">false</config:config-item>
   </config:config-item-set>
  </office:settings>
@@ -154,10 +155,12 @@
  </office:scripts>
  <office:font-face-decls>
   <style:font-face style:name="Liberation Mono" svg:font-family="&apos;Liberation Mono&apos;" style:font-family-generic="modern" style:font-pitch="fixed"/>
-  <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
+  <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  <style:font-face style:name="Liberation Sans1" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
   <style:font-face style:name="Liberation Serif" svg:font-family="&apos;Liberation Serif&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
   <style:font-face style:name="Lohit Devanagari" svg:font-family="&apos;Lohit Devanagari&apos;"/>
-  <style:font-face style:name="Lohit Devanagari1" svg:font-family="&apos;Lohit Devanagari&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Lohit Devanagari1" svg:font-family="&apos;Lohit Devanagari&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  <style:font-face style:name="Lohit Devanagari2" svg:font-family="&apos;Lohit Devanagari&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
   <style:font-face style:name="Noto Sans CJK SC" svg:font-family="&apos;Noto Sans CJK SC&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
   <style:font-face style:name="Noto Serif CJK SC" svg:font-family="&apos;Noto Serif CJK SC&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
   <style:font-face style:name="OpenSymbol" svg:font-family="OpenSymbol" style:font-charset="x-symbol"/>
@@ -168,11 +171,11 @@
    <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" loext:tab-stop-distance="0cm" style:writing-mode="lr-tb" style:font-independent-line-spacing="false">
     <style:tab-stops/>
    </style:paragraph-properties>
-   <style:text-properties style:use-window-font-color="true" loext:opacity="0%" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:letter-kerning="true" style:font-name-asian="Noto Serif CJK SC" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lohit Devanagari1" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN"/>
+   <style:text-properties style:use-window-font-color="true" loext:opacity="0%" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:letter-kerning="true" style:font-name-asian="Noto Serif CJK SC" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lohit Devanagari2" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN"/>
   </style:default-style>
   <style:default-style style:family="paragraph">
-   <style:paragraph-properties fo:hyphenation-ladder-count="no-limit" style:text-autospace="ideograph-alpha" style:punctuation-wrap="hanging" style:line-break="strict" style:tab-stop-distance="1.251cm" style:writing-mode="page"/>
-   <style:text-properties style:use-window-font-color="true" loext:opacity="0%" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:letter-kerning="true" style:font-name-asian="Noto Serif CJK SC" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lohit Devanagari1" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN" fo:hyphenate="false" fo:hyphenation-remain-char-count="2" fo:hyphenation-push-char-count="2" loext:hyphenation-no-caps="false" loext:hyphenation-no-last-word="false" loext:hyphenation-word-char-count="5" loext:hyphenation-zone="no-limit"/>
+   <style:paragraph-properties fo:hyphenation-ladder-count="no-limit" style:text-autospace="ideograph-alpha" style:punctuation-wrap="hanging" style:line-break="strict" style:tab-stop-distance="1.251cm" style:writing-mode="lr-tb"/>
+   <style:text-properties style:use-window-font-color="true" loext:opacity="0%" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:letter-kerning="true" style:font-name-asian="Noto Serif CJK SC" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lohit Devanagari2" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN" fo:hyphenate="false" fo:hyphenation-remain-char-count="2" fo:hyphenation-push-char-count="2" loext:hyphenation-no-caps="false" loext:hyphenation-no-last-word="false" loext:hyphenation-word-char-count="5" loext:hyphenation-zone="no-limit"/>
   </style:default-style>
   <style:default-style style:family="table">
    <style:table-properties table:border-model="collapsing"/>
@@ -183,7 +186,7 @@
   <style:style style:name="Standard" style:family="paragraph" style:class="text"/>
   <style:style style:name="Heading" style:family="paragraph" style:parent-style-name="Standard" style:next-style-name="Text_20_body" style:class="text">
    <style:paragraph-properties fo:margin-top="0.423cm" fo:margin-bottom="0.212cm" style:contextual-spacing="false" fo:keep-with-next="always"/>
-   <style:text-properties style:font-name="Liberation Sans" fo:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable" fo:font-size="14pt" style:font-name-asian="Noto Sans CJK SC" style:font-family-asian="&apos;Noto Sans CJK SC&apos;" style:font-family-generic-asian="system" style:font-pitch-asian="variable" style:font-size-asian="14pt" style:font-name-complex="Lohit Devanagari1" style:font-family-complex="&apos;Lohit Devanagari&apos;" style:font-family-generic-complex="system" style:font-pitch-complex="variable" style:font-size-complex="14pt"/>
+   <style:text-properties style:font-name="Liberation Sans1" fo:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable" fo:font-size="14pt" style:font-name-asian="Noto Sans CJK SC" style:font-family-asian="&apos;Noto Sans CJK SC&apos;" style:font-family-generic-asian="system" style:font-pitch-asian="variable" style:font-size-asian="14pt" style:font-name-complex="Lohit Devanagari2" style:font-family-complex="&apos;Lohit Devanagari&apos;" style:font-family-generic-complex="system" style:font-pitch-complex="variable" style:font-size-complex="14pt"/>
   </style:style>
   <style:style style:name="Text_20_body" style:display-name="Text body" style:family="paragraph" style:parent-style-name="Standard" style:class="text">
    <style:paragraph-properties fo:margin-top="0cm" fo:margin-bottom="0.247cm" style:contextual-spacing="false" fo:line-height="115%"/>
@@ -278,6 +281,9 @@
   <text:notes-configuration text:note-class="footnote" style:num-format="1" text:start-value="0" text:footnotes-position="page" text:start-numbering-at="document"/>
   <text:notes-configuration text:note-class="endnote" style:num-format="i" text:start-value="0"/>
   <text:linenumbering-configuration text:number-lines="false" text:offset="0.499cm" style:num-format="1" text:number-position="left" text:increment="5"/>
+  <style:default-page-layout>
+   <style:page-layout-properties style:writing-mode="lr-tb" style:layout-grid-standard-mode="true"/>
+  </style:default-page-layout>
   <loext:theme loext:name="Office">
    <loext:theme-colors loext:name="LibreOffice">
     <loext:color loext:name="dark1" loext:color="#000000"/>
@@ -429,6 +435,27 @@
   <style:style style:name="Tabelle1.H5" style:family="table-cell">
    <style:table-cell-properties fo:padding="0.097cm" fo:border-left="0.5pt solid #000000" fo:border-right="0.5pt solid #000000" fo:border-top="none" fo:border-bottom="0.5pt solid #000000"/>
   </style:style>
+  <style:style style:name="Tabelle2" style:family="table">
+   <style:table-properties style:width="8.971cm" fo:margin-left="-0.053cm" fo:margin-top="0cm" fo:margin-bottom="0cm" table:align="left" style:writing-mode="page"/>
+  </style:style>
+  <style:style style:name="Tabelle2.A" style:family="table-column">
+   <style:table-column-properties style:column-width="2.02cm"/>
+  </style:style>
+  <style:style style:name="Tabelle2.B" style:family="table-column">
+   <style:table-column-properties style:column-width="1.506cm"/>
+  </style:style>
+  <style:style style:name="Tabelle2.C" style:family="table-column">
+   <style:table-column-properties style:column-width="1.97cm"/>
+  </style:style>
+  <style:style style:name="Tabelle2.D" style:family="table-column">
+   <style:table-column-properties style:column-width="1.969cm"/>
+  </style:style>
+  <style:style style:name="Tabelle2.1" style:family="table-row">
+   <style:table-row-properties style:min-row-height="0.452cm" fo:keep-together="auto"/>
+  </style:style>
+  <style:style style:name="Tabelle2.A1" style:family="table-cell">
+   <style:table-cell-properties style:vertical-align="bottom" fo:padding-left="0.053cm" fo:padding-right="0.053cm" fo:padding-top="0cm" fo:padding-bottom="0cm" fo:border="none"/>
+  </style:style>
   <style:style style:name="P1" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:paragraph-rsid="000551f5"/>
   </style:style>
@@ -436,94 +463,141 @@
    <style:paragraph-properties fo:text-align="center" style:justify-single-word="false"/>
   </style:style>
   <style:style style:name="P3" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties officeooo:rsid="00070012" officeooo:paragraph-rsid="00070012"/>
+   <style:paragraph-properties fo:text-align="center" style:justify-single-word="false">
+    <style:tab-stops/>
+   </style:paragraph-properties>
   </style:style>
   <style:style style:name="P4" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties officeooo:rsid="00070012" officeooo:paragraph-rsid="00070592"/>
+   <style:text-properties officeooo:rsid="00070012" officeooo:paragraph-rsid="00070012"/>
   </style:style>
   <style:style style:name="P5" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US"/>
+   <style:text-properties officeooo:rsid="00070012" officeooo:paragraph-rsid="00070592"/>
   </style:style>
   <style:style style:name="P6" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00070012" officeooo:paragraph-rsid="00070592"/>
+   <style:text-properties fo:language="en" fo:country="US"/>
   </style:style>
   <style:style style:name="P7" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00070012" officeooo:paragraph-rsid="00070012"/>
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00070012" officeooo:paragraph-rsid="00070592"/>
   </style:style>
   <style:style style:name="P8" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="00070012"/>
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00070012" officeooo:paragraph-rsid="00070012"/>
   </style:style>
   <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="0007b6fd"/>
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="00070012"/>
   </style:style>
   <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Standard">
-   <style:paragraph-properties fo:break-before="page"/>
    <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="0007b6fd"/>
   </style:style>
   <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="000a3c71"/>
+   <style:paragraph-properties fo:break-before="page"/>
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="0007b6fd"/>
   </style:style>
   <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="000a3c71"/>
+  </style:style>
+  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="0009498c"/>
   </style:style>
-  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Text_20_body">
+  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Text_20_body">
    <style:paragraph-properties fo:break-before="page"/>
    <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="0009498c"/>
-  </style:style>
-  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="000a3c71"/>
   </style:style>
   <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="000b9dc3" officeooo:paragraph-rsid="000b9dc3"/>
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="000a3c71"/>
   </style:style>
   <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2"/>
-  </style:style>
-  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2"/>
-  </style:style>
-  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" fo:font-weight="bold" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-  </style:style>
-  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00120f17" officeooo:paragraph-rsid="00120f17"/>
-  </style:style>
-  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties officeooo:paragraph-rsid="00070012"/>
-  </style:style>
-  <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties style:font-name="Liberation Mono" fo:font-size="10pt" fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="0009498c" style:font-size-asian="10pt" style:font-size-complex="10pt"/>
-  </style:style>
-  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties style:font-name="Liberation Mono" fo:font-size="9pt" fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="000a3c71" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
-  </style:style>
-  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Table_20_Contents">
-   <style:text-properties officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="0007b6fd"/>
-  </style:style>
-  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Table_20_Contents">
-   <style:text-properties officeooo:rsid="0008ed9c" officeooo:paragraph-rsid="0008ed9c"/>
-  </style:style>
-  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:paragraph-rsid="000dcbd2"/>
-  </style:style>
-  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties fo:font-weight="bold" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
-  </style:style>
-  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Heading_20_2">
-   <style:paragraph-properties fo:text-align="center" style:justify-single-word="false"/>
-  </style:style>
-  <style:style style:name="P28" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00070012" officeooo:paragraph-rsid="00070592"/>
-  </style:style>
-  <style:style style:name="P29" style:family="paragraph" style:parent-style-name="Standard">
    <style:paragraph-properties fo:break-before="page"/>
    <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="000a3c71"/>
   </style:style>
-  <style:style style:name="P30" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="000a3c71"/>
+  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="000b9dc3" officeooo:paragraph-rsid="000b9dc3"/>
   </style:style>
-  <style:style style:name="P31" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1">
+  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2"/>
+  </style:style>
+  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2"/>
+  </style:style>
+  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties fo:language="en" fo:country="US" fo:font-weight="bold" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" fo:font-weight="bold" officeooo:rsid="00135d00" officeooo:paragraph-rsid="00135d00" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00120f17" officeooo:paragraph-rsid="00120f17"/>
+  </style:style>
+  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00135d00" officeooo:paragraph-rsid="00135d00"/>
+  </style:style>
+  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00135d00" officeooo:paragraph-rsid="00150048"/>
+  </style:style>
+  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00135d00" officeooo:paragraph-rsid="0016e47c"/>
+  </style:style>
+  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00135d00" officeooo:paragraph-rsid="0018acea"/>
+  </style:style>
+  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="italic" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color" officeooo:rsid="00135d00" officeooo:paragraph-rsid="00135d00" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="P28" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00150048" officeooo:paragraph-rsid="00150048"/>
+  </style:style>
+  <style:style style:name="P29" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color" officeooo:rsid="00135d00" officeooo:paragraph-rsid="00135d00"/>
+  </style:style>
+  <style:style style:name="P30" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:paragraph-rsid="00070012"/>
+  </style:style>
+  <style:style style:name="P31" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties style:font-name="Liberation Mono" fo:font-size="10pt" fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="0009498c" style:font-size-asian="10pt" style:font-size-complex="10pt"/>
+  </style:style>
+  <style:style style:name="P32" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties style:font-name="Liberation Mono" fo:font-size="9pt" fo:language="en" fo:country="US" officeooo:rsid="0009498c" officeooo:paragraph-rsid="000a3c71" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
+  </style:style>
+  <style:style style:name="P33" style:family="paragraph" style:parent-style-name="Table_20_Contents">
+   <style:text-properties officeooo:rsid="0007b6fd" officeooo:paragraph-rsid="0007b6fd"/>
+  </style:style>
+  <style:style style:name="P34" style:family="paragraph" style:parent-style-name="Table_20_Contents">
+   <style:text-properties officeooo:rsid="0008ed9c" officeooo:paragraph-rsid="0008ed9c"/>
+  </style:style>
+  <style:style style:name="P35" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:paragraph-rsid="000dcbd2"/>
+  </style:style>
+  <style:style style:name="P36" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:font-weight="bold" officeooo:rsid="000dcbd2" officeooo:paragraph-rsid="000dcbd2" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="P37" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:paragraph-rsid="0016e47c"/>
+  </style:style>
+  <style:style style:name="P38" style:family="paragraph" style:parent-style-name="Heading_20_2">
+   <style:paragraph-properties fo:text-align="center" style:justify-single-word="false"/>
+  </style:style>
+  <style:style style:name="P39" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00070012" officeooo:paragraph-rsid="00070592"/>
+  </style:style>
+  <style:style style:name="P40" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1">
    <style:text-properties officeooo:rsid="00070012" officeooo:paragraph-rsid="00070592"/>
+  </style:style>
+  <style:style style:name="P41" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:paragraph-rsid="000dcbd2"/>
+  </style:style>
+  <style:style style:name="P42" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="italic" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color" officeooo:rsid="00135d00" officeooo:paragraph-rsid="00135d00" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="P43" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="normal" officeooo:rsid="00150048" officeooo:paragraph-rsid="0016e47c" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="P44" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00135d00" officeooo:paragraph-rsid="001a90c6"/>
+  </style:style>
+  <style:style style:name="P45" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:paragraph-rsid="001ab71a"/>
+  </style:style>
+  <style:style style:name="P46" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties style:font-name="Liberation Mono" fo:font-size="8pt" officeooo:paragraph-rsid="001ab71a" style:font-size-asian="8pt" style:font-size-complex="8pt"/>
   </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties officeooo:rsid="00070012"/>
@@ -538,19 +612,100 @@
    <style:text-properties fo:language="en" fo:country="US" officeooo:rsid="00070592"/>
   </style:style>
   <style:style style:name="T5" style:family="text">
-   <style:text-properties officeooo:rsid="0007b6fd"/>
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="normal" officeooo:rsid="0016e47c" style:font-style-asian="normal" style:font-style-complex="normal"/>
   </style:style>
   <style:style style:name="T6" style:family="text">
-   <style:text-properties officeooo:rsid="0008ed9c"/>
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="normal" officeooo:rsid="00150048" style:font-style-asian="normal" style:font-style-complex="normal"/>
   </style:style>
   <style:style style:name="T7" style:family="text">
-   <style:text-properties officeooo:rsid="000cd8c0"/>
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="normal" officeooo:rsid="001a90c6" style:font-style-asian="normal" style:font-style-complex="normal"/>
   </style:style>
   <style:style style:name="T8" style:family="text">
-   <style:text-properties officeooo:rsid="0009498c"/>
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="normal" officeooo:rsid="001ab71a" style:font-style-asian="normal" style:font-style-complex="normal"/>
   </style:style>
   <style:style style:name="T9" style:family="text">
+   <style:text-properties fo:language="en" fo:country="US" fo:font-style="normal" officeooo:rsid="00135d00" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T10" style:family="text">
+   <style:text-properties officeooo:rsid="0007b6fd"/>
+  </style:style>
+  <style:style style:name="T11" style:family="text">
+   <style:text-properties officeooo:rsid="0008ed9c"/>
+  </style:style>
+  <style:style style:name="T12" style:family="text">
+   <style:text-properties officeooo:rsid="000cd8c0"/>
+  </style:style>
+  <style:style style:name="T13" style:family="text">
+   <style:text-properties officeooo:rsid="0009498c"/>
+  </style:style>
+  <style:style style:name="T14" style:family="text">
    <style:text-properties officeooo:rsid="00120f17"/>
+  </style:style>
+  <style:style style:name="T15" style:family="text">
+   <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="T16" style:family="text">
+   <style:text-properties fo:font-style="normal" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T17" style:family="text">
+   <style:text-properties fo:font-style="normal" officeooo:rsid="00150048" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T18" style:family="text">
+   <style:text-properties fo:font-style="normal" officeooo:rsid="0016e47c" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T19" style:family="text">
+   <style:text-properties fo:font-style="normal" officeooo:rsid="0018acea" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T20" style:family="text">
+   <style:text-properties fo:font-style="normal" officeooo:rsid="0019dc34" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T21" style:family="text">
+   <style:text-properties fo:font-style="normal" officeooo:rsid="001a90c6" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T22" style:family="text">
+   <style:text-properties fo:font-style="normal" officeooo:rsid="001ab71a" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T23" style:family="text">
+   <style:text-properties officeooo:rsid="00150048"/>
+  </style:style>
+  <style:style style:name="T24" style:family="text">
+   <style:text-properties officeooo:rsid="0016e47c"/>
+  </style:style>
+  <style:style style:name="T25" style:family="text">
+   <style:text-properties style:font-name="Liberation Sans"/>
+  </style:style>
+  <style:style style:name="T26" style:family="text">
+   <style:text-properties style:font-name="Liberation Sans" fo:font-style="normal" officeooo:rsid="0016e47c" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T27" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:font-size-asian="10pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T28" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" officeooo:rsid="001a90c6" style:font-size-asian="10pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T29" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" officeooo:rsid="001ab71a" style:font-size-asian="10pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T30" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Lohit Devanagari1" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:font-size-asian="10pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T31" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:font-size-asian="10pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T32" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" officeooo:rsid="001a90c6" style:font-size-asian="10pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T33" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" officeooo:rsid="001ab71a" style:font-size-asian="10pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T34" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T35" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" officeooo:rsid="001a90c6" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
+  </style:style>
+  <style:style style:name="T36" style:family="text">
+   <style:text-properties style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" officeooo:rsid="001ab71a" style:font-style-asian="normal" style:font-weight-asian="normal" style:text-emphasize="none"/>
   </style:style>
   <style:style style:name="fr1" style:family="graphic" style:parent-style-name="Graphics">
    <style:graphic-properties style:vertical-pos="from-top" style:vertical-rel="paragraph" style:horizontal-pos="from-left" style:horizontal-rel="paragraph" style:mirror="none" fo:clip="rect(0cm, 0cm, 0cm, 0cm)" draw:luminance="0%" draw:contrast="0%" draw:red="0%" draw:green="0%" draw:blue="0%" draw:gamma="100%" draw:color-inversion="false" draw:image-opacity="100%" draw:color-mode="standard"/>
@@ -611,7 +766,7 @@
    </text:list-level-style-bullet>
   </text:list-style>
   <style:page-layout style:name="pm1">
-   <style:page-layout-properties fo:page-width="21.001cm" fo:page-height="29.7cm" style:num-format="1" style:print-orientation="portrait" fo:margin-top="2cm" fo:margin-bottom="2cm" fo:margin-left="2cm" fo:margin-right="2cm" style:writing-mode="lr-tb" style:layout-grid-color="#c0c0c0" style:layout-grid-lines="20" style:layout-grid-base-height="0.706cm" style:layout-grid-ruby-height="0.353cm" style:layout-grid-mode="none" style:layout-grid-ruby-below="false" style:layout-grid-print="false" style:layout-grid-display="false" style:footnote-max-height="0cm" loext:margin-gutter="0cm">
+   <style:page-layout-properties fo:page-width="21.001cm" fo:page-height="29.7cm" style:num-format="1" style:print-orientation="portrait" fo:margin-top="2cm" fo:margin-bottom="2cm" fo:margin-left="2cm" fo:margin-right="2cm" style:writing-mode="lr-tb" style:layout-grid-color="#c0c0c0" style:layout-grid-lines="44" style:layout-grid-base-height="0.55cm" style:layout-grid-ruby-height="0cm" style:layout-grid-mode="none" style:layout-grid-ruby-below="false" style:layout-grid-print="true" style:layout-grid-display="true" style:layout-grid-base-width="0.37cm" style:layout-grid-snap-to="true" style:footnote-max-height="0cm" loext:margin-gutter="0cm">
     <style:footnote-sep style:width="0.018cm" style:distance-before-sep="0.101cm" style:distance-after-sep="0.101cm" style:line-style="solid" style:adjustment="left" style:rel-width="25%" style:color="#000000"/>
    </style:page-layout-properties>
    <style:header-style/>
@@ -634,24 +789,24 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Figure"/>
    </text:sequence-decls>
    <text:h text:style-name="P2" text:outline-level="2">Reverse<text:span text:style-name="T1"> </text:span>engineering<text:span text:style-name="T1"> serial connections at Yuneec Typhoon H</text:span></text:h>
-   <text:p text:style-name="P5"/>
-   <text:p text:style-name="P20"><text:span text:style-name="T3">It&apos;s interesting to understand the message format of the communication between remote controller ST16 and drone H480 as well as the communication from flight controller to gimbal/camera CGO3+. This may help to create or improve projects to use camera or remote controller for other systems and further development of Thunderbird firmware (</text:span><text:a xlink:type="simple" xlink:href="https://github.com/h-elsner/Thunderbird" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T3">see here</text:span></text:a><text:span text:style-name="T3">).</text:span></text:p>
-   <text:p text:style-name="P3"><text:span text:style-name="T2">A first setup using a Raspberry Pi is described here: </text:span><text:a xlink:type="simple" xlink:href="https://github.com/h-elsner/SR24_decode" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T2">https://github.com/h-elsner/SR24_decode</text:span></text:a></text:p>
-   <text:p text:style-name="P3"><text:span text:style-name="T2"/></text:p>
-   <text:p text:style-name="P4"><text:span text:style-name="T2">Now I tried to bring together </text:span><text:span text:style-name="T4">the </text:span><text:span text:style-name="T2">communication of </text:span></text:p>
+   <text:p text:style-name="P6"/>
+   <text:p text:style-name="P30"><text:span text:style-name="T3">It&apos;s interesting to understand the message format of the communication between remote controller ST16 and drone H480 as well as the communication from flight controller to gimbal/camera CGO3+. This may help to create or improve projects to use camera or remote controller for other systems and further development of Thunderbird firmware (</text:span><text:a xlink:type="simple" xlink:href="https://github.com/h-elsner/Thunderbird" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T3">see here</text:span></text:a><text:span text:style-name="T3">).</text:span></text:p>
+   <text:p text:style-name="P4"><text:span text:style-name="T2">A first setup using a Raspberry Pi is described here: </text:span><text:a xlink:type="simple" xlink:href="https://github.com/h-elsner/SR24_decode" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T2">https://github.com/h-elsner/SR24_decode</text:span></text:a></text:p>
+   <text:p text:style-name="P4"><text:span text:style-name="T2"/></text:p>
+   <text:p text:style-name="P5"><text:span text:style-name="T2">Now I tried to bring together </text:span><text:span text:style-name="T4">the </text:span><text:span text:style-name="T2">communication of </text:span></text:p>
    <text:list text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P28">ST16 &lt;-&gt; SR24 and </text:p>
+     <text:p text:style-name="P39">ST16 &lt;-&gt; SR24 and </text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P31"><text:span text:style-name="T4">Autopilot (FC = </text:span><text:span text:style-name="T2">Flight controller</text:span><text:span text:style-name="T4">)</text:span><text:span text:style-name="T2"> &lt;-&gt; CGO3+.</text:span></text:p>
+     <text:p text:style-name="P40"><text:span text:style-name="T4">Autopilot (FC = </text:span><text:span text:style-name="T2">Flight controller</text:span><text:span text:style-name="T4">)</text:span><text:span text:style-name="T2"> &lt;-&gt; CGO3+.</text:span></text:p>
     </text:list-item>
    </text:list>
-   <text:p text:style-name="P4"><text:span text:style-name="T2"/></text:p>
-   <text:p text:style-name="P4"><text:span text:style-name="T2">I got a Saleae Logic Analyzer with four channels.</text:span><text:span text:style-name="T4"> To record I use this analyzer software: </text:span><text:a xlink:type="simple" xlink:href="https://www.saleae.com/pages/downloads" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T4">https://www.saleae.com/pages/downloads</text:span></text:a></text:p>
-   <text:p text:style-name="P4"><text:span text:style-name="T4"/></text:p>
-   <text:p text:style-name="P7">The setup is as following<text:span text:style-name="T6"> </text:span><text:span text:style-name="T5">(</text:span><text:span text:style-name="T6">with c</text:span><text:span text:style-name="T5">olor coding of my wir</text:span><text:span text:style-name="T6">ing</text:span><text:span text:style-name="T5"> to reproduce this setup)</text:span><text:span text:style-name="T6">:</text:span></text:p>
-   <text:p text:style-name="P8"/>
+   <text:p text:style-name="P5"><text:span text:style-name="T2"/></text:p>
+   <text:p text:style-name="P5"><text:span text:style-name="T2">I got a Saleae Logic Analyzer with four channels.</text:span><text:span text:style-name="T4"> To record I use this analyzer software: </text:span><text:a xlink:type="simple" xlink:href="https://www.saleae.com/pages/downloads" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T4">https://www.saleae.com/pages/downloads</text:span></text:a></text:p>
+   <text:p text:style-name="P5"><text:span text:style-name="T4"/></text:p>
+   <text:p text:style-name="P8">The setup is as following<text:span text:style-name="T11"> </text:span><text:span text:style-name="T10">(</text:span><text:span text:style-name="T11">with c</text:span><text:span text:style-name="T10">olor coding of my wir</text:span><text:span text:style-name="T11">ing</text:span><text:span text:style-name="T10"> to reproduce this setup)</text:span><text:span text:style-name="T11">:</text:span></text:p>
+   <text:p text:style-name="P9"/>
    <table:table table:name="Tabelle1" table:style-name="Tabelle1">
     <table:table-column table:style-name="Tabelle1.A"/>
     <table:table-column table:style-name="Tabelle1.B"/>
@@ -663,49 +818,49 @@
     <table:table-column table:style-name="Tabelle1.H"/>
     <table:table-row>
      <table:table-cell table:style-name="Tabelle1.A1" office:value-type="string">
-      <text:p text:style-name="P23">Analyzer</text:p>
-      <text:p text:style-name="P23">channel</text:p>
+      <text:p text:style-name="P33">Analyzer</text:p>
+      <text:p text:style-name="P33">channel</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.A1" office:value-type="string">
-      <text:p text:style-name="P23">connected to</text:p>
+      <text:p text:style-name="P33">connected to</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.A1" office:value-type="string">
-      <text:p text:style-name="P23"/>
+      <text:p text:style-name="P33"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.A1" office:value-type="string">
-      <text:p text:style-name="P23">Analyzer color</text:p>
+      <text:p text:style-name="P33">Analyzer color</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.A1" office:value-type="string">
-      <text:p text:style-name="P23">Cam color</text:p>
+      <text:p text:style-name="P33">Cam color</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.A1" office:value-type="string">
-      <text:p text:style-name="P23">Adapter color</text:p>
+      <text:p text:style-name="P33">Adapter color</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.A1" office:value-type="string">
-      <text:p text:style-name="P24">SR24 color</text:p>
+      <text:p text:style-name="P34">SR24 color</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.H1" office:value-type="string">
-      <text:p text:style-name="P24">Adapter color</text:p>
+      <text:p text:style-name="P34">Adapter color</text:p>
      </table:table-cell>
     </table:table-row>
     <table:table-row>
      <table:table-cell table:style-name="Tabelle1.A2" office:value-type="string">
-      <text:p text:style-name="P23">Channel 0</text:p>
+      <text:p text:style-name="P33">Channel 0</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.B2" office:value-type="string">
-      <text:p text:style-name="P23">Cam Rx</text:p>
+      <text:p text:style-name="P33">Cam Rx</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.C2" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.D2" office:value-type="string">
-      <text:p text:style-name="P24">black</text:p>
+      <text:p text:style-name="P34">black</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.E2" office:value-type="string">
-      <text:p text:style-name="P24">purple/green</text:p>
+      <text:p text:style-name="P34">purple/green</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.F2" office:value-type="string">
-      <text:p text:style-name="P24">grey</text:p>
+      <text:p text:style-name="P34">grey</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.G2" office:value-type="string">
       <text:p text:style-name="Table_20_Contents"/>
@@ -716,22 +871,22 @@
     </table:table-row>
     <table:table-row>
      <table:table-cell table:style-name="Tabelle1.A2" office:value-type="string">
-      <text:p text:style-name="P23">Channel 1</text:p>
+      <text:p text:style-name="P33">Channel 1</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.B3" office:value-type="string">
-      <text:p text:style-name="P23">Cam Tx</text:p>
+      <text:p text:style-name="P33">Cam Tx</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.C3" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.D3" office:value-type="string">
-      <text:p text:style-name="P24">brown</text:p>
+      <text:p text:style-name="P34">brown</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.E2" office:value-type="string">
-      <text:p text:style-name="P24">grey/blue</text:p>
+      <text:p text:style-name="P34">grey/blue</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.F3" office:value-type="string">
-      <text:p text:style-name="P24">purple</text:p>
+      <text:p text:style-name="P34">purple</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.G3" office:value-type="string">
       <text:p text:style-name="Table_20_Contents"/>
@@ -742,58 +897,58 @@
     </table:table-row>
     <table:table-row>
      <table:table-cell table:style-name="Tabelle1.A2" office:value-type="string">
-      <text:p text:style-name="P23">Channel 2</text:p>
+      <text:p text:style-name="P33">Channel 2</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.B4" office:value-type="string">
-      <text:p text:style-name="P23">SR24 Rx</text:p>
+      <text:p text:style-name="P33">SR24 Rx</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.C4" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.D4" office:value-type="string">
-      <text:p text:style-name="P24">red</text:p>
+      <text:p text:style-name="P34">red</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.E2" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.F4" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.G4" office:value-type="string">
-      <text:p text:style-name="P24">yellow</text:p>
+      <text:p text:style-name="P34">yellow</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.H4" office:value-type="string">
-      <text:p text:style-name="P24">blue</text:p>
+      <text:p text:style-name="P34">blue</text:p>
      </table:table-cell>
     </table:table-row>
     <table:table-row>
      <table:table-cell table:style-name="Tabelle1.A2" office:value-type="string">
-      <text:p text:style-name="P23">Channel 3</text:p>
+      <text:p text:style-name="P33">Channel 3</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.B5" office:value-type="string">
-      <text:p text:style-name="P23">SR24 TX</text:p>
+      <text:p text:style-name="P33">SR24 TX</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.C5" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.D5" office:value-type="string">
-      <text:p text:style-name="P24">orange</text:p>
+      <text:p text:style-name="P34">orange</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.E2" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.F5" office:value-type="string">
-      <text:p text:style-name="P24"/>
+      <text:p text:style-name="P34"/>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.G5" office:value-type="string">
-      <text:p text:style-name="P24">orange</text:p>
+      <text:p text:style-name="P34">orange</text:p>
      </table:table-cell>
      <table:table-cell table:style-name="Tabelle1.H5" office:value-type="string">
-      <text:p text:style-name="P24">green</text:p>
+      <text:p text:style-name="P34">green</text:p>
      </table:table-cell>
     </table:table-row>
    </table:table>
-   <text:p text:style-name="P9"><draw:frame draw:style-name="fr2" draw:name="Bild3" text:anchor-type="char" svg:x="-0.074cm" svg:y="1.207cm" svg:width="17cm" svg:height="9.571cm" draw:z-index="1"><draw:image draw:mime-type="image/jpeg">
+   <text:p text:style-name="P10"><draw:frame draw:style-name="fr2" draw:name="Bild3" text:anchor-type="char" svg:x="-0.074cm" svg:y="1.207cm" svg:width="17cm" svg:height="9.571cm" draw:z-index="1"><draw:image draw:mime-type="image/jpeg">
       <office:binary-data>/9j/4AAQSkZJRgABAQAAAQABAAD/4YH4RXhpZgAASUkqAAgAAAAQAAsAAgAKAAAAzgAAAAAB
        CQABAAAA6wUAAAEBCQABAAAAVQMAAA8BAgAKAAAA2AAAABABAgAIAAAA4gAAABIBCQABAAAA
        AQAAABoBBQABAAAA6gAAABsBBQABAAAA8gAAACgBAwABAAAAAgAAADEBAgAKAAAA+gAAADIB
@@ -5167,7 +5322,7 @@
       </office:binary-data>
      </draw:image>
     </draw:frame></text:p>
-   <text:p text:style-name="P29"><draw:frame draw:style-name="fr2" draw:name="Bild1" text:anchor-type="char" svg:x="0.046cm" svg:y="-0.298cm" svg:width="17cm" svg:height="9.246cm" draw:z-index="0"><draw:image draw:mime-type="image/png">
+   <text:p text:style-name="P16"><draw:frame draw:style-name="fr2" draw:name="Bild1" text:anchor-type="char" svg:x="0.046cm" svg:y="-0.298cm" svg:width="17cm" svg:height="9.246cm" draw:z-index="0"><draw:image draw:mime-type="image/png">
       <office:binary-data>iVBORw0KGgoAAAANSUhEUgAABjgAAANiCAYAAADczsBRAAAABHNCSVQICAgIfAhkiAAAABh0
        RVh0U29mdHdhcmUAbWF0ZS1zY3JlZW5zaG90yJbwSgAAIABJREFUeJzs3XlclWX+//HXOcDB
        BRTxmAiKgjjhmpbiqLikZmqGS06ppS2jtNmMmd9WK8cptaawxWwip3FLzZ+JqbmUSwptOCXu
@@ -7495,15 +7650,15 @@
       </office:binary-data>
      </draw:image>
     </draw:frame></text:p>
-   <text:p text:style-name="P14">The Logic Analyzer records Async Serial in following format:</text:p>
-   <text:p text:style-name="P14"/>
-   <text:p text:style-name="P22">Time [s],Value,Parity Error,Framing Error</text:p>
-   <text:p text:style-name="P22">0.001172500000000,0xFE,,</text:p>
-   <text:p text:style-name="P22">0.001259166666667,0x1A,,</text:p>
-   <text:p text:style-name="P22">0.001345833333333,0x20,,</text:p>
-   <text:p text:style-name="P22"><text:s text:c="2"/>etc ...</text:p>
-   <text:p text:style-name="P11"/>
-   <text:p text:style-name="P12">The converter tool &quot;cam_uart&quot; converts this to messages from camera or SR24 which can be stored as CSV files and in some cases can decode it. The CSV files can be checked in any chart tool like <draw:frame draw:style-name="fr1" draw:name="Bild2" text:anchor-type="char" svg:x="0.028cm" svg:y="1.535cm" svg:width="17cm" svg:height="11.4cm" draw:z-index="2"><draw:image draw:mime-type="image/png">
+   <text:p text:style-name="P15">The Logic Analyzer records Async Serial in following format:</text:p>
+   <text:p text:style-name="P15"/>
+   <text:p text:style-name="P32">Time [s],Value,Parity Error,Framing Error</text:p>
+   <text:p text:style-name="P32">0.001172500000000,0xFE,,</text:p>
+   <text:p text:style-name="P32">0.001259166666667,0x1A,,</text:p>
+   <text:p text:style-name="P32">0.001345833333333,0x20,,</text:p>
+   <text:p text:style-name="P32"><text:s text:c="2"/>etc ...</text:p>
+   <text:p text:style-name="P12"/>
+   <text:p text:style-name="P13">The converter tool &quot;cam_uart&quot; converts this to messages from camera or SR24 which can be stored as CSV files and in some cases can decode it. The CSV files can be checked in any chart tool like <draw:frame draw:style-name="fr1" draw:name="Bild2" text:anchor-type="char" svg:x="0.028cm" svg:y="1.535cm" svg:width="17cm" svg:height="11.4cm" draw:z-index="2"><draw:image draw:mime-type="image/png">
       <office:binary-data>iVBORw0KGgoAAAANSUhEUgAABUcAAAOKCAYAAAC4eeGqAAAABHNCSVQICAgIfAhkiAAAABh0
        RVh0U29mdHdhcmUAbWF0ZS1zY3JlZW5zaG90yJbwSgAAIABJREFUeJzs3Xd4FFXbx/Hv7G4a
        6SSE0CH0IohSRJCOIkgXsGKjqA+KBQugr9hFsQCiFMVHQQQsICDwiEiR3jsi0iG0ENLr7sz7
@@ -10606,28 +10761,63 @@
       </office:binary-data>
      </draw:image>
     </draw:frame>Libre Office Calc or Excel.</text:p>
-   <text:p text:style-name="P15"><text:soft-page-break/>With the tool you can inspect single files or merge the files from two or four channels together to see what is going up and down.</text:p>
-   <text:p text:style-name="P15">One interesting point is that there are messages, Msg_ID=255 from/to cam (magic byte 0xFE) where another message format is nested in. Those nested messages with magic byte 0xBC are <text:span text:style-name="T7">recorded</text:span> in FlightLogs on ST16 as Sensor_xxxxx.bin.<text:span text:style-name="T7"> Sensor files from FlightLogs can be extracted with q500log2kml.</text:span></text:p>
-   <text:p text:style-name="P12"/>
-   <text:p text:style-name="P12"/>
-   <text:p text:style-name="P12"/>
-   <text:p text:style-name="P18">SR24 to Autopilot communication:</text:p>
-   <text:p text:style-name="P16"/>
-   <text:p text:style-name="P16"><text:span text:style-name="T8">The basics are pretty clear. ST16 sends Channel data messages (Msg_type 0, 1 or 3) up to drone </text:span>(Autopilot) <text:span text:style-name="T8">and receives Telemetry messages (Msg_type 2). Bind message is Msg_type 4. All those </text:span>messages <text:span text:style-name="T8">are well documented and are enough to use STxx for other projects.</text:span></text:p>
-   <text:p text:style-name="P25"/>
-   <text:p text:style-name="P25">The tricky part is Msg_type 20. Th<text:span text:style-name="T9">is is</text:span> H480 specific. Some <text:span text:style-name="T9">messages </text:span>are clear, some not. Surprisingly I see no messages when I start calibration, also GPS switch looks strange. Here we need to dive deeper.</text:p>
-   <text:p text:style-name="P25"/>
-   <text:p text:style-name="P26">Autopilot to Gimbal/Camera/5GHz WiFi:</text:p>
-   <text:p text:style-name="P17">For feature &quot;Dual Band Control Redundancy&quot; Channel data will be sent via WiFi (and then camera UART). Backwards Telemetry messages are sent to Remote control. Both messages are pretty clear (Msg_ID=8), Telemetry over 5GHz is Msg_ID=2.</text:p>
-   <text:p text:style-name="P19">Currently I try to find out what the first 20 byte in Message &quot;Attitude&quot;, Msg_ID 2 mean.</text:p>
-   <text:p text:style-name="P17">We can also exclude the Sensor messages (Msg_ID=255). In this messages is another message format <text:span text:style-name="T9">embedded</text:span> that is recorded in FlightLog files Sensor_xxxxx.bin. I think this is only for troubleshooting. Only Yuneec knows what there is in.<text:span text:style-name="T9"> I found only the System time and some position data (coordinates). This is for later development...</text:span></text:p>
-   <text:p text:style-name="P17"/>
-   <text:p text:style-name="P17"/>
-   <text:p text:style-name="P17"/>
-   <text:p text:style-name="P17"/>
-   <text:p text:style-name="P25"/>
-   <text:p text:style-name="P25"/>
-   <text:p text:style-name="P25"/>
+   <text:p text:style-name="P17"><text:soft-page-break/>With the tool you can inspect single files or merge the files from two or four channels together to see what is going up and down.</text:p>
+   <text:p text:style-name="P17">One interesting point is that there are messages, Msg_ID=255 from/to cam (magic byte 0xFE) where another message format is nested in. Those nested messages with magic byte 0xBC are <text:span text:style-name="T12">recorded</text:span> in FlightLogs on ST16 as Sensor_xxxxx.bin.<text:span text:style-name="T12"> Sensor files from FlightLogs can be extracted with q500log2kml.</text:span></text:p>
+   <text:p text:style-name="P13"/>
+   <text:p text:style-name="P13"/>
+   <text:p text:style-name="P13"/>
+   <text:p text:style-name="P20">SR24<text:span text:style-name="T23"> (RC)</text:span> to Autopilot communication:</text:p>
+   <text:p text:style-name="P18"/>
+   <text:p text:style-name="P18"><text:span text:style-name="T13">The basics are pretty clear. ST16 sends Channel data messages (Msg_type 0, 1 or 3) up to drone </text:span>(Autopilot) <text:span text:style-name="T13">and receives Telemetry messages (Msg_type 2). Bind message is Msg_type 4. All those </text:span>messages <text:span text:style-name="T13">are well documented and are enough to use STxx for other projects.</text:span></text:p>
+   <text:p text:style-name="P35"/>
+   <text:p text:style-name="P35">The tricky part is Msg_type 20. Th<text:span text:style-name="T14">is is</text:span> H480 specific. Some <text:span text:style-name="T14">messages </text:span>are clear, some not. Surprisingly I see no messages when I start calibration, also GPS switch looks strange. Here we need to dive deeper.</text:p>
+   <text:p text:style-name="P35"/>
+   <text:p text:style-name="P36">Autopilot to Gimbal/Camera/5GHz WiFi:</text:p>
+   <text:p text:style-name="P19">For feature &quot;Dual Band Control Redundancy&quot; Channel data will be sent via WiFi (and then camera UART). Backwards Telemetry messages are sent to Remote control. Both messages are pretty clear (Msg_ID=8), Telemetry over 5GHz is Msg_ID=2.</text:p>
+   <text:p text:style-name="P22">Currently I try to find out what the first 20 byte in Message &quot;Attitude&quot;, Msg_ID 2 mean.</text:p>
+   <text:p text:style-name="P19">We can also exclude the Sensor messages (Msg_ID=255). In this messages is another message format <text:span text:style-name="T14">embedded</text:span> that is recorded in FlightLog files Sensor_xxxxx.bin. I think this is only for troubleshooting. Only Yuneec knows what there is in.<text:span text:style-name="T14"> I found only the System time and some position data (coordinates). This is for later development...</text:span></text:p>
+   <text:p text:style-name="P19"/>
+   <text:p text:style-name="P21">Communication rules found so far:</text:p>
+   <text:p text:style-name="P27">ST16 (Analyzer CH2)<text:tab/><text:tab/>&lt;--&gt;<text:tab/>Flight controller via SR24 (Analyzer CH3)</text:p>
+   <text:p text:style-name="P25">ChannelData12 frequenty<text:tab/><text:tab/><text:line-break/>ChannelData12+Controller GPS<text:line-break/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>Telemetry<text:line-break/>Commands via AdditionalData<text:tab/>Responses to Additional commands + RSdepth (maybe this <text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>message contains also depth from Sonar)</text:p>
+   <text:p text:style-name="P23"><text:tab/></text:p>
+   <text:p text:style-name="P27">Flight controller serial<text:span text:style-name="T24"> (CH0) </text:span>&lt;--&gt;<text:tab/>Gimbal/Camera<text:span text:style-name="T24"> (Analyzer CH1)</text:span></text:p>
+   <text:p text:style-name="P24"><text:span text:style-name="T16">Heartbeat (1Hz</text:span><text:span text:style-name="T18"> broadcast</text:span><text:span text:style-name="T16">)</text:span><text:span text:style-name="T18"> *</text:span><text:span text:style-name="T16"><text:tab/><text:tab/>Heartbeat (1Hz)</text:span><text:span text:style-name="T18"> *</text:span><text:span text:style-name="T16"><text:line-break/>Attitude (frequently)<text:tab/><text:tab/><text:tab/>Attitude Status (1Hz)</text:span><text:span text:style-name="T19"> *</text:span><text:span text:style-name="T16"><text:line-break/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>Gimbal position (1Hz)<text:line-break/>Telemetry to WiFi<text:line-break/></text:span><text:soft-page-break/><text:span text:style-name="T16">SensorData (frequently)<text:tab/><text:tab/>SensorData (Status?)<text:line-break/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>MsgType 0 (1Hz)<text:line-break/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>MsgType 51 (0,1Hz - means all 10sec)<text:line-break/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>Controller GPS to WiFi<text:line-break/></text:span><text:span text:style-name="T17"><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>Parameter request</text:span><text:span text:style-name="T20"> to Target ID 5 (SYS_SW_VERS)</text:span><text:span text:style-name="T17"><text:line-break/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>Answer? </text:span><text:span text:style-name="T20">to Autopilot</text:span></text:p>
+   <text:p text:style-name="P28"><text:span text:style-name="T16">* Those messages are always the same as I could see - can be taken to mimic H480 for other projects.</text:span></text:p>
+   <text:p text:style-name="P26"><text:span text:style-name="T18">Heartbeat from Autopilot broadcast:</text:span><text:span text:style-name="T19"><text:tab/></text:span><text:span text:style-name="T18">00 00 00 00 01<text:line-break/>Heartbeat from camera:<text:tab/><text:tab/>00 00 7D 00 01<text:line-break/></text:span><text:span text:style-name="T19">Attitude from gimbal:<text:tab/><text:tab/><text:tab/>01 00 01 <text:s/>maybe one is gimbal and the other camera<text:line-break/><text:tab/><text:tab/><text:tab/><text:tab/><text:tab/>06 00 01 <text:s/>see unknown SysID=6 that sends Telemetry_5GHz</text:span></text:p>
+   <table:table table:name="Tabelle2" table:style-name="Tabelle2">
+    <table:table-column table:style-name="Tabelle2.A"/>
+    <table:table-column table:style-name="Tabelle2.B"/>
+    <table:table-column table:style-name="Tabelle2.C"/>
+    <table:table-column table:style-name="Tabelle2.D"/>
+    <table:table-column table:style-name="Tabelle2.B"/>
+    <table:table-row table:style-name="Tabelle2.1">
+     <table:table-cell table:style-name="Tabelle2.A1" office:value-type="string">
+      <text:p text:style-name="P3"><text:span text:style-name="T26"/></text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Tabelle2.A1" office:value-type="string">
+      <text:p text:style-name="P3"><text:span text:style-name="T25"/></text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Tabelle2.A1" office:value-type="string">
+      <text:p text:style-name="P3"><text:span text:style-name="T25"/></text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Tabelle2.A1" office:value-type="string">
+      <text:p text:style-name="P3"><text:span text:style-name="T25"/></text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Tabelle2.A1" office:value-type="string">
+      <text:p text:style-name="P3"><text:span text:style-name="T25"/></text:p>
+     </table:table-cell>
+    </table:table-row>
+   </table:table>
+   <text:p text:style-name="Standard"/>
+   <text:p text:style-name="P43"><text:tab/></text:p>
+   <text:p text:style-name="P44"><text:span text:style-name="T21">RC lost:</text:span></text:p>
+   <text:p text:style-name="P45"><text:span text:style-name="T7">SR24 still sends Messages 0 and 3 but package counter begins to count from1 to FF</text:span><text:span text:style-name="T8"> (5s)</text:span><text:span text:style-name="T7"> and remains at FF. Messages have the values last sent by the RC although RC was switched off (forever I think, at least until I switches off the machine). FC still sends Message 3 (Telemetry) and message 20 (Additional data</text:span><text:span text:style-name="T8">, action type 1 (till 9s), 3 and 8 from FC) for next 13s. Then FC stops sending anything.</text:span><text:span text:style-name="T9"><text:line-break/></text:span></text:p>
+   <text:p text:style-name="P46"><text:span text:style-name="T34">11.5429178333</text:span><text:span text:style-name="T35"> package counter starts to count. FC works as usual, sends message 3 and 20<text:line-break/></text:span><text:span text:style-name="T34">13.5323969166</text:span><text:span text:style-name="T35"> package counter reaches 100<text:line-break/></text:span><text:span text:style-name="T34">16.6472205833</text:span><text:span text:style-name="T35"> package counter reaches 255<text:line-break/></text:span><text:span text:style-name="T34">24.5301494166</text:span><text:span text:style-name="T36"> </text:span><text:span text:style-name="T35">last message 2<text:line-break/></text:span><text:span text:style-name="T34">24.3336494166</text:span><text:span text:style-name="T35"> last message 20, msg 0 and 3 still coming from an not existing RC<text:line-break/></text:span><text:span text:style-name="T34">29.1869264166</text:span><text:span text:style-name="T35"> switched off all</text:span></text:p>
+   <text:p text:style-name="P41"/>
+   <text:p text:style-name="P41"/>
+   <text:p text:style-name="P41"/>
+   <text:p text:style-name="P41"/>
   </office:text>
  </office:body>
 </office:document>
