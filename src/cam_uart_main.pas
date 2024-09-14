@@ -333,7 +333,7 @@ end;
 
 procedure CommonFixPartMessage(var MAVmsgFixPart: TMAVmessage; list: TStringlist; var lineidx: integer);
 begin
-  MAVmsgFixPart.timepoint:=SecondsToDateTime(list[lineidx].Split([sep])[0]);
+  MAVmsgFixPart.time:=SecondsToDateTime(list[lineidx].Split([sep])[0]);
   MAVmsgFixPart.msgbytes[0]:=v1magicbyte;
   inc(lineIdx);
   MAVmsgFixPart.msgLength:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
@@ -357,7 +357,7 @@ begin
   with result do begin
     if lineidx<list.Count-8 then begin
       CommonFixPartMessage(result, list, lineidx);
-      if (msglength=0) or (timepoint=0) then begin
+      if (msglength=0) or (time=0) then begin
         valid:=false;
         exit;
       end;
@@ -397,7 +397,7 @@ var
 
 begin
   result:='';
-  if list.Count>1 then begin
+  if list.Count>0 then begin
     result:=list[0];
     for i:=1 to list.Count-1 do
       if list[i]<>leer then
@@ -690,12 +690,9 @@ procedure PayloadTelemetry_5GHz(msg: TMAVmessage; var list: TStringList);
 var
   lat, lon, alt: single;
   v1, v2, v3: int16;
-  i: integer;
-  istext: boolean;
 
-begin
-  istext:=true;
-  if msg.targetid=3 then begin
+  procedure telemetryUp;
+  begin
     if MavGetGPSdata(msg, 8, lat, lon, alt) then begin {Get lat, lon and alt from GPS data}
       WriteGPSdata(list, 7, lat, lon, alt, false);
       WriteAltRel(list, 15, MavGetIntFromBuf(msg, 15, 4));
@@ -718,7 +715,13 @@ begin
     list.Add(GPSaccHToStr(msg.msgbytes[41]));
   end;
 
-  if msg.targetid=0 then begin
+  procedure polling;
+  var
+    i: integer;
+    istext: boolean;
+
+  begin
+    istext:=true;
     for i:=8 to 13 do
       list[i-1]:=IntToHex(msg.msgbytes[i], 2);
     for i:=14 to msg.msglength do begin
@@ -730,6 +733,115 @@ begin
           istext:=false;
       end;
     end;
+  end;
+
+  procedure Time_ms;
+  begin
+    list[7]:='';
+    list[8]:='Time [ms]';
+    list[9]:=IntToStr(MavGetIntFromBuf(msg, 9, 4));
+    list[10]:='';
+    list[11]:='';
+  end;
+
+  procedure MUasGRYPOWER;
+  begin
+    Time_ms;
+  end;
+
+  procedure MUasANGLEEULER;
+  begin
+    Time_ms;
+  end;
+
+  procedure MUasACC;
+  begin
+    Time_ms;
+  end;
+
+  procedure MUasTEMPDIFF;
+  begin
+    Time_ms;
+
+    list[36]:='IMUtemp=';
+    list[37]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 37, 2)*0.01)+'°C';
+  end;
+
+  procedure MUasStatus;
+  begin
+    Time_ms;
+    list[12]:='Volt=';
+    list[13]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 13, 2)*0.01);
+    list[14]:='Ampere=';
+    list[15]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 15, 2)*0.01);
+    list[16]:='Seconds=';
+    list[17]:=IntToStr(MavGetIntFromBuf(msg, 17, 2));
+    list[18]:='Encdata_P=';
+    list[19]:=IntToStr(MavGetIntFromBuf(msg, 19, 2));
+    list[20]:='Encdata_R=';
+    list[21]:=IntToStr(MavGetIntFromBuf(msg, 21, 2));
+    list[22]:='Encdata_Y=';
+    list[23]:=IntToStr(MavGetIntFromBuf(msg, 23, 2));
+    list[24]:='Stageangle_X=';
+    list[25]:=FormatFloat(ctfl, MavGetInt16(msg, 25)*0.01);
+    list[26]:='Stageangle_Y=';
+    list[27]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 27, 2)*0.01);
+    list[28]:='Aircraftangle_X=';
+    list[29]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 29, 2)*0.01);
+    list[30]:='Aircraftangle_Y=';
+    list[31]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 31, 2)*0.01);
+    list[32]:='Aircraftangle_Z=';
+    list[33]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 33, 2)*0.01);
+    list[34]:='Gyrostable_X='+IntToStr(msg.msgbytes[35]);
+    list[35]:='Gyrostable_Y='+IntToStr(msg.msgbytes[36]);
+    list[36]:='Gyrostable_Z='+IntToStr(msg.msgbytes[37]);
+  end;
+
+  procedure YGC_Type18;
+  begin
+  // unknown
+  end;
+
+  procedure FW_Info;
+  var
+    i: integer;
+
+  begin
+    list[7]:=IntToStr(msg.msgbytes[8]);
+//    list[7]:='';
+    for i:=8 to list.Count-1 do
+      if msg.msgbytes[i+1]>31 then
+        list[i]:=CharOutput(msg.msgbytes[i+1]);
+  end;
+
+  procedure CamYGCmessage;
+  begin
+    list[3]:=YGC_TypeToStr(msg.msgbytes[8]); {YGC msg type to Action Type: optional}
+    list[7]:='';
+    case msg.msgbytes[8] of
+      1: MUasGRYPOWER;
+      2: MUasANGLEEULER;
+      3: MUasACC;
+
+      5: MUasTEMPDIFF;
+      6: MUasStatus;
+      18: YGC_Type18;
+      254: FW_Info;
+    end;
+  end;
+
+  procedure ToolYGCmessage;
+  begin
+    list[3]:=YGC_CommandToStr(msg.msgbytes[8]);
+    {Undef}
+  end;
+
+begin
+  case msg.targetid of
+    0: Polling;
+    2: if msg.sysid=10 then ToolYGCmessage;
+    3: telemetryUp;
+    10: if msg.sysid=2 then CamYGCmessage;
   end;
 end;
 
@@ -813,7 +925,7 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
     end;
 
     list[18]:='Since boot:';
-    list[19]:=FormatFloat('0.000', MavGetIntFromBuf(msg, 22, 4)/1000)+'s';
+    list[19]:=FormatFloat('0.000', MavGetUInt32(msg, 22)/1000)+'s';
     list[20]:='';
     list[21]:='';
   end;
@@ -826,64 +938,218 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
   procedure GPS_RAW_INT;                  {18'h 24}
   var
     lat, lon, alt: single;
-
-  begin
-    list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetIntFromBuf(msg, 14, 8)/1000000)+'s';
-    list[12]:='';
-    list[13]:='';
-    if MavGetGPSdata(msg, 18, lat, lon, alt) then  {Get lat, lon and alt from GPS data}
-      WriteGPSdata(list, 14, lat, lon, alt, true);
-
-    list[38]:='FixType: '+IntToStr(msg.msgbytes[42]);
-    list[39]:=IntToStr(msg.msgbytes[43])+' Sats';
-  end;
-
-  procedure GLOBAL_POSITION;                  {21'h 33}
-  var
-    lat, lon, alt: single;
     i: integer;
 
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetIntFromBuf(msg, 14, 4)/1000)+'s';
+    list[11]:=FormatFloat('0.000', MavGetIntFromBuf(msg, 14, 8)/1000000)+'s';
     for i:=12 to 17 do
       list[i]:='';
 
     if MavGetGPSdata(msg, 22, lat, lon, alt) then  {Get lat, lon and alt from GPS data}
       WriteGPSdata(list, 18, lat, lon, alt, true);
 
+    list[38]:='FixType: '+IntToStr(msg.msgbytes[42]);
+    list[39]:=IntToStr(msg.msgbytes[43])+' Sats';
   end;
 
+  procedure RAW_IMU;                          {1B'h 27}
+  var
+    i: integer;
+
+  begin
+    list[10]:='Since boot:';
+    list[11]:=FormatFloat('0.000', MavGetIntFromBuf(msg, 14, 8)/1000000)+'s';
+    for i:=12 to 17 do
+      list[i]:='';
+
+  end;
+
+  procedure SCALED_PRESSURE;                  {1D'h 29}
+  begin
+    list[10]:='Since boot:';
+    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[12]:='';
+    list[13]:='';
+
+    list[14]:='Pressure absolute=';
+    list[15]:=FormatFloat('0.0', MavGetFloatFromBuf(msg, 18));
+    list[16]:='hPa';
+    list[17]:='';
+
+    list[14]:='Pressure diff=';
+    list[15]:=FormatFloat('0.000', MavGetFloatFromBuf(msg, 22));
+    list[16]:='hPa';
+    list[17]:='';
+
+    list[22]:='Baro temp=';
+    list[23]:=FormatFloat(ctfl, MavGetIntFromBuf(msg, 26, 2)*0.01)+'°C';
+  end;
+
+  procedure GLOBAL_POSITION;                  {21'h 33}
+  var
+    lat, lon, alt: single;
+
+  begin
+    list[10]:='Since boot:';
+    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[12]:='';
+    list[13]:='';
+    if MavGetGPSdata(msg, 18, lat, lon, alt) then  {Get lat, lon and alt from GPS data}
+      WriteGPSdata(list, 14, lat, lon, alt, true);
+
+  end;
+
+  procedure ATTITUDE;
+  begin
+    list[10]:='Since boot:';
+    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[12]:='';
+    list[13]:='';
+
+  end;
+
+  procedure MISSION_CURRENT;
+  begin
+    list[10]:='Sequence:';
+    list[11]:=IntToStr(MavGetUInt16(msg, 14));
+  end;
+
+  procedure Sys_type;
+  var
+    i: integer;
+
+  begin
+    for i:=16 to 34 do begin
+      if msg.msgbytes[i+4]>0 then
+        list[i]:=chr(msg.msgbytes[i+4]);
+    end;
+  end;
+
+  procedure RC_CHANNELS_RAW;
+  var
+    i: integer;
+
+  begin
+    list[10]:='Since boot:';
+    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[12]:='';
+    list[13]:='';
+    for i:=1 to 8 do begin
+      list[i*2 + 12]:='Chan'+IntToStr(i);
+      list[i*2 + 13]:=IntToStr(MavGetUInt16(msg, i*2 + 16));
+    end;
+    list[30]:='Port: '+IntToStr(msg.msgbytes[34]);
+    list[11]:='RSSI='+IntToStr(msg.msgbytes[35]);
+  end;
+
+  procedure RC_CHANNELS;
+  var
+    i: integer;
+
+  begin
+    list[10]:='Since boot:';
+    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[12]:='';
+    list[13]:='';
+    for i:=1 to 18 do begin
+      list[i*2 + 12]:='Chan'+IntToStr(i);
+      list[i*2 + 13]:=IntToStr(MavGetUInt16(msg, i*2 + 16));
+    end;
+    list[50]:=IntToStr(msg.msgbytes[54])+' channels';
+    list[51]:='RSSI='+IntToStr(msg.msgbytes[55]);
+  end;
+
+  procedure SERVO_OUTPUT_RAW;
+  var
+    i: integer;
+
+  begin
+    list[10]:='Since boot:';
+    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'ms';
+    list[12]:='';
+    list[13]:='';
+    for i:=1 to 8 do begin
+      list[i*2 + 12]:='Servo'+IntToStr(i);
+      list[i*2 + 13]:=IntToStr(MavGetUInt16(msg, i*2 + 16))+'µs';
+    end;
+    list[30]:='Port: '+IntToStr(msg.msgbytes[34]);
+  end;
+
+  procedure VRF_HUD;
+  begin
+    list[10]:='Airspeed=';
+    list[11]:=FormatFloat('0.0', MavGetFloatFromBuf(msg, 14));
+    list[12]:='m/s';
+    list[13]:='';
+    list[14]:='Groundspeed=';
+    list[15]:=FormatFloat('0.0', MavGetFloatFromBuf(msg, 18));
+    list[16]:='m/s';
+    list[17]:='';
+    list[18]:='Alt MSL=';
+    list[19]:=FormatFloat('0.00', MavGetFloatFromBuf(msg, 22));
+    list[20]:='m';
+    list[21]:='';
+    list[22]:='Climb rate=';
+    list[23]:=FormatFloat('0.0', MavGetFloatFromBuf(msg, 26));
+    list[24]:='m/s';
+    list[25]:='';
+    list[26]:='Heading [°]=';
+    list[27]:=IntToStr(MavGetInt16(msg, 30));
+    list[28]:='Throttle [%]=';
+    list[29]:=IntToStr(MavGetUInt16(msg, 32));
+  end;
 
 {
 00:00.747	50	SensorData	Home? (0xB2=178)	Autopilot	Camera		01	01	B2	C7	41	4C	3C	BC	3A	BC	3B	2F	7F	AA	BF	1E	A5	FF	43	0D	B7	BE	1C	C8	98	04	06
 00:01.147	66	SensorData	Home? (0xB2=178)	Autopilot	Camera		01	01	B2	64	CF	49	3C	0C	B6	BC	3B	F8	80	AA	BF	B8	9E	FF	43	0D	B7	BE	1C	C1	98	04	06
 }
-  procedure BCmsg178;                 {Home position?}
+  procedure AHRS2;                 {Attitude and Heading Reference System}
   var
      lat, lon, alt: single;
 
   begin
+    list[22]:='Alt=';
+    list[23]:=FormatFloat('0.00', MavGetFloatFromBuf(msg, 26));
+    list[24]:='[m]';
+    list[25]:='';
     if MavGetGPSdata(msg, 30, lat, lon, alt) then  {Get lat, lon and alt from GPS data}
       WriteGPSdata(list, 26, lat, lon, alt, false);
   end;
 
-  procedure nix;
+  procedure STATUS_TEXT;
+  var
+    i: integer;
+
   begin
-    // ToDo, mache nix
+    list[10]:='Severity: '+SeverityToStr(msg.msgbytes[14]);
+    for i:=11 to 60 do begin
+      if msg.msgbytes[i+4]=0 then
+        list[i]:='.'
+      else
+        list[i]:=chr(msg.msgbytes[i+4]);
+    end;
   end;
 
 {https://mavlink.io/en/messages/common.html}
 begin
   list[9]:=IntToStr(msg.msgbytes[13]);
-  case msg.msgbytes[13] of            {Message type BC}
-    0, 27, 29, 30, 35, 36, 42, 52, 62, 65, 74, 150, 163, 165, 172, 173, 193, 253: Nix;
+  case msg.msgbytes[13] of             {Message type BC}
     1: SysStatus;
     2: SystemTime;
-    24: GPS_RAW_INT;                      {GPS data and ?}
+    24: GPS_RAW_INT;                   {GPS data}
+    27: RAW_IMU;
+    29: SCALED_PRESSURE;
+    30: ATTITUDE;
     33: GLOBAL_POSITION;
-    178: BCmsg178;                        {wie Mav command 179 ?}
+    35: RC_CHANNELS_RAW;
+    36: SERVO_OUTPUT_RAW;
+    42: MISSION_CURRENT;
+    52: Sys_type;
+    65: RC_CHANNELS;
+    74: VRF_HUD;
+    178: AHRS2;                        {Attitude and Heading Reference System}
+    253: STATUS_TEXT;
   end;
 end;
 

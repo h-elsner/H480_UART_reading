@@ -89,6 +89,8 @@ File format:
 2024-08-17      Merge CGO3+ and SR24 communication
 2024-08-23      Code review and clean up
 2024-08-25 V1.3 Chart added
+2024-09-04 V1.4 YGC messages added
+2024-09-14      BC Message types reworked
 
 *)
 
@@ -120,7 +122,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.3 2024-08-26';
+  AppVersion='V1.4 2024-09-14';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
@@ -202,7 +204,7 @@ begin
   if (b>31) and (b<127) then begin
     result:=chr(b);
   end else
-    result:=IntToStr(b);
+    result:=IntToHex(b, 2);
 
 end;
 

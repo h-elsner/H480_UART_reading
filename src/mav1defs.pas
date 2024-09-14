@@ -24,7 +24,7 @@ const
 
 type
   TMAVmessage = record
-    timepoint: TDateTime;
+    time: TDateTime;
     msglength: integer;
     msgbytes: array[0..NumPayLoadBytes+lenfix] of byte;
     sysid: byte;
@@ -38,13 +38,18 @@ type
 function MavGetIntFromBuf(msg: TMAVmessage; pos, numbytes: integer): uint64; {Position/Anzahl Bytes}
 function MavGetFloatFromBuf(msg: TMAVmessage; pos: integer): single; {Position, Länge immer 4}
 function MavGetUInt16(msg: TMAVmessage; pos: integer): uint16;
+function MavGetInt16(msg: TMAVmessage; pos: integer): int16;
 function MavGetUInt32(msg: TMAVmessage; pos: integer): uint32;
+function MavGetInt32(msg: TMAVmessage; pos: integer): int32;
 
 function ClearMAVmessage: TMAVmessage;
 function MsgIDToStr(id: byte): string;
 function SysIDToStr(id: byte): string;
 function TargetIDToStr(id: byte): string;
 function SensorTypeToStr(id: byte): string;  {Message BC}
+function YGC_TypeToStr(y: byte): string;
+function YGC_CommandToStr(y: byte): string;
+function SeverityToStr(sv: byte): string;
 
 function IntToYaw(v: integer): string;
 function IntToAngle(v: integer): string;
@@ -94,15 +99,28 @@ begin
   result:=wx;                                    {Typecast mittels absolute}
 end;
 
-function MavGetUInt16(msg: TMAVmessage; pos: integer): uint16;
-var
-  i: integer;
+function MavGetInt16(msg: TMAVmessage; pos: integer): int16;
+begin
+  result:=msg.msgbytes[pos]+msg.msgbytes[pos+1]*256;
+end;
 
+function MavGetUInt16(msg: TMAVmessage; pos: integer): uint16;
 begin
   result:=msg.msgbytes[pos]+msg.msgbytes[pos+1]*256;
 end;
 
 function MavGetUInt32(msg: TMAVmessage; pos: integer): uint32;
+var
+  i: integer;
+
+begin
+  result:=0;
+  for i:=0 to 3 do begin
+    result:=result+msg.msgbytes[i+pos]*(256**i);
+  end;
+end;
+
+function MavGetInt32(msg: TMAVmessage; pos: integer): int32;
 var
   i: integer;
 
@@ -119,7 +137,6 @@ var
 
 begin
   result.msglength:=0;
-  result.timepoint:=0;
   result.sysid:=0;
   result.targetid:=0;
   result.valid:=false;
@@ -137,7 +154,7 @@ begin
     3: result:='Gimbal position';             {Sys_Id Camera?; 1Hz }
     8: result:='C-GPS_5GHz';
     20: result:='PARAM_REQUEST_READ';
-    76: result:='Answer_param_request';
+    76: result:='Follow_on_param_request';    {Command long?? Passt nicht}
     255: result:='SensorData';
   end;
 end;
@@ -147,10 +164,11 @@ begin
   result:=rsUnknown_+' '+IntToStr(id)+' (0x'+HexStr(id, 2)+')';
   case id of
     1: result:='Autopilot';                   {Flight controller (Autopilot)}
-    2: result:='Camera';
+    2: result:='Gimbal';
     3, 200: result:='Gimbal';                 {200 in nested Sensor data}
     4: result:='Remote';
     6: result:='SysID6';
+    10: result:='YQGC';
     88: result:='Undef';
   end;
 end;
@@ -164,6 +182,7 @@ begin
     2: result:='Gimbal';
     3: result:='Camera';
     5: result:='WiFi? (5)';
+    10: result:='YQGC';
     88: result:='Undef';
     99: result:='Remote';                    {Platzhalter für virtuelle Sender ID}
   end;
@@ -171,17 +190,73 @@ end;
 
 function SensorTypeToStr(id: byte): string;  {Message BC}
 begin
-  result:=rsUnknown_+' '+IntToStr(id)+' (0x'+HexStr(id, 2)+')';
+  result:=rsUnknown_+' '+IntToStr(id);
   case id of
+    0:   result:='Heartbeat?';
     1:   result:='SYS_STATUS';
     2:   result:='System_Time';
-    24:  result:='GPS_RAW_INT';
-    33:  result:='GLOBAL_POSITION_INT';
-    51:  result:='Camera/Gimbal_status';
-    178: result:='Home? (0xB2=178)';
+    24:  result:='GPS_RAW';
+    27:  result:='RAW_IMU';
+    29:  result:='SCALED_PRESSURE';
+    30:  result:='ATTITUDE';
+    33:  result:='GLOBAL_POSITION';
+    35:  result:='RC_CHANNELS_RAW';
+    36:  result:='SERVO_OUTPUT_RAW';
+    42:  result:='MISSION_CURRENT';
+    51:  result:='MISSION_REQUEST_INT';
+    52:  result:='Sys_type?';                      {Text: CGO3_Plus / TyphoonH}
+    62:  result:='NAV_CONTROLLER_OUTPUT';
+    65:  result:='RC_CHANNELS';
+    74:  result:='VRF_HUD';
+    150: result:='SENSOR_OFFSETS';
+    163: result:='AHRS';                           {Attitude and Heading Reference System}
+    165: result:='HW_STATUS';
+    172: result:='DATA96';
+    173: result:='RANGEFINDER';
+    178: result:='AHRS2';
+    193: result:='EKF_STATUS_REPORT';              {Extended Kalman Filter}
+    253: result:='STATUS_TEXT';
   end;
 end;
 
+function YGC_TypeToStr(y: byte): string;
+begin
+  result:=rsUndef_+IntToStr(y);
+  case y of
+    1: result:='GYRO_POWER';
+    2: result:='EULER_ANGLE';
+    3: result:='ACC';
+    5: result:='TEMP_DIFF';
+    6: result:='MSTATUS';
+    18: result:='Undef 0x12 (18) 1Hz';
+    254: result:='FW_Info';
+  end;
+end;
+
+function YGC_CommandToStr(y: byte): string;
+begin
+  result:='YGC_Request ('+intToStr(y)+')';
+  case y of
+    20: result:='Front_cali?';
+    24: result:='Read_SWversion';
+    36: result:='Data_request?';
+  end;
+end;
+
+function SeverityToStr(sv: byte): string;
+begin
+  result:='undef';
+  case sv of
+    0: result:='EMERGENCY';
+    1: result:='ALERT';
+    2: result:='CRITICAL';
+    3: result:='ERROR';
+    4: result:='WARNING';
+    5: result:='NOTICE';
+    6: result:='INFO';
+    7: result:='DEBUG';
+  end;
+end;
 
 function IntToYaw(v: integer): string;
 begin
