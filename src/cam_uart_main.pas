@@ -129,6 +129,8 @@ type
     Chart1: TChart;
     AutoScaleLeft: TAutoScaleAxisTransform;
     AutoScaleRight: TAutoScaleAxisTransform;
+    edErrorCounterMAV: TEdit;
+    edErrorCounterSR24: TEdit;
     edLength: TEdit;
     edOther: TEdit;
     edSumMsgID: TEdit;
@@ -593,7 +595,7 @@ begin
     if IsNan(v) then
       s:='NaN'
     else
-      s:=FormatFloat('0.00', v);
+      s:=FormatFloat(ctfl, v);
     result:='Hex:    '+ByteStr+lineending+
             'Dez:    '+IntToStr(AsByte)+lineending;
     if (AsByte>31) and (AsByte<127) then
@@ -696,7 +698,7 @@ var
   begin
     if MavGetGPSdata(msg, 8, lat, lon, alt) then begin {Get lat, lon and alt from GPS data}
       WriteGPSdata(list, 7, lat, lon, alt, false);
-      WriteAltRel(list, 15, MavGetIntFromBuf(msg, 15, 4));
+      WriteAltRel(list, 15, MavGetInt32(msg, 15));
     end;
 
     MavGetInt123(msg, 20, v1, v2, v3);
@@ -926,7 +928,7 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
     end;
 
     list[18]:='Since boot:';
-    list[19]:=FormatFloat('0.000', MavGetUInt32(msg, 22)/1000)+'s';
+    list[19]:=FormatFloat(mlfl, MavGetUInt32(msg, 22)/1000)+'s';
     list[20]:='';
     list[21]:='';
   end;
@@ -943,13 +945,26 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
 
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetIntFromBuf(msg, 14, 8)/1000000)+'s';
+    list[11]:=FormatFloat(mlfl, MavGetIntFromBuf(msg, 14, 8)/1000000)+'s';
     for i:=12 to 17 do
       list[i]:='';
 
-    if MavGetGPSdata(msg, 22, lat, lon, alt) then  {Get lat, lon and alt from GPS data}
-      WriteGPSdata(list, 18, lat, lon, alt, true);
-
+    if MavGetGPSdata(msg, 22, lat, lon, alt) then begin {Get lat, lon and alt from GPS data}
+      WriteGPSdata(list, 18, lat, lon, alt, false);
+    end;
+    alt:=MavGetInt32(msg, 30)*0.001;
+    list[26]:='Alt_MSL=';
+    list[27]:=FormatFloat(ctfl, alt);
+    list[28]:='m';
+    list[29]:='';
+    list[30]:='eph=';
+    list[31]:=FormatFloat(ctfl, MavGetUint16(msg, 34)*0.01);
+    list[32]:='epv=';
+    list[33]:=FormatFloat(ctfl, MavGetUint16(msg, 36)*0.01);
+    list[34]:='vel=';
+    list[35]:=FormatFloat(ctfl, MavGetUint16(msg, 38)*0.01)+'m/s';
+    list[36]:='cog=';
+    list[37]:=FormatFloat(ctfl, MavGetUint16(msg, 40)*0.01)+'°';
     list[38]:='FixType: '+IntToStr(msg.msgbytes[42]);
     list[39]:=IntToStr(msg.msgbytes[43])+' Sats';
   end;
@@ -960,7 +975,7 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
 
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetIntFromBuf(msg, 14, 8)/1000000)+'s';
+    list[11]:=FormatFloat(mlfl, MavGetIntFromBuf(msg, 14, 8)/1000000)+'s';
     for i:=12 to 17 do
       list[i]:='';
 
@@ -969,17 +984,17 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
   procedure SCALED_PRESSURE;                  {1D'h 29}
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[11]:=FormatFloat(mlfl, MavGetUInt32(msg, 14)/1000)+'s';
     list[12]:='';
     list[13]:='';
 
     list[14]:='Pressure absolute=';
-    list[15]:=FormatFloat('0.0', MavGetFloatFromBuf(msg, 18));
+    list[15]:=FormatFloat(dzfl, MavGetFloatFromBuf(msg, 18));
     list[16]:='hPa';
     list[17]:='';
 
     list[14]:='Pressure diff=';
-    list[15]:=FormatFloat('0.000', MavGetFloatFromBuf(msg, 22));
+    list[15]:=FormatFloat(mlfl, MavGetFloatFromBuf(msg, 22));
     list[16]:='hPa';
     list[17]:='';
 
@@ -993,18 +1008,27 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
 
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[11]:=FormatFloat(mlfl, MavGetUInt32(msg, 14)/1000)+'s';
     list[12]:='';
     list[13]:='';
-    if MavGetGPSdata(msg, 18, lat, lon, alt) then  {Get lat, lon and alt from GPS data}
+    if MavGetGPSdata(msg, 18, lat, lon, alt) then begin {Get lat, lon and alt from GPS data}
+      alt:=MavGetInt32(msg, 26)*0.001;
       WriteGPSdata(list, 14, lat, lon, alt, true);
+    end;
+    alt:=MavGetInt32(msg, 30)*0.001;
+    list[26]:=rsAlt+'=';
+    list[27]:=FormatFloat(ctfl, alt)+'m';
+    list[28]:='';
+    list[29]:='';
 
+    list[36]:='Heading=';
+    list[37]:=FormatFloat(dzfl, MavGetUInt16(msg, 40)*0.01)+'°';
   end;
 
   procedure ATTITUDE;
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[11]:=FormatFloat(mlfl, MavGetUInt32(msg, 14)/1000)+'s';
     list[12]:='';
     list[13]:='';
 
@@ -1033,7 +1057,7 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
 
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[11]:=FormatFloat(mlfl, MavGetUInt32(msg, 14)/1000)+'s';
     list[12]:='';
     list[13]:='';
     for i:=1 to 8 do begin
@@ -1050,7 +1074,7 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
 
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'s';
+    list[11]:=FormatFloat(mlfl, MavGetUInt32(msg, 14)/1000)+'s';
     list[12]:='';
     list[13]:='';
     for i:=1 to 18 do begin
@@ -1067,7 +1091,7 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
 
   begin
     list[10]:='Since boot:';
-    list[11]:=FormatFloat('0.000', MavGetUInt32(msg, 14)/1000)+'ms';
+    list[11]:=FormatFloat(mlfl, MavGetUInt32(msg, 14)/1000)+'ms';
     list[12]:='';
     list[13]:='';
     for i:=1 to 8 do begin
@@ -1080,19 +1104,19 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
   procedure VRF_HUD;
   begin
     list[10]:='Airspeed=';
-    list[11]:=FormatFloat('0.00', MavGetFloatFromBuf(msg, 14));
+    list[11]:=FormatFloat(ctfl, MavGetFloatFromBuf(msg, 14));
     list[12]:='m/s';
     list[13]:='';
     list[14]:='Groundspeed=';
-    list[15]:=FormatFloat('0.00', MavGetFloatFromBuf(msg, 18));
+    list[15]:=FormatFloat(ctfl, MavGetFloatFromBuf(msg, 18));
     list[16]:='m/s';
     list[17]:='';
-    list[18]:='Alt MSL=';
-    list[19]:=FormatFloat('0.00', MavGetFloatFromBuf(msg, 22));
+    list[18]:='Alt_rel=';
+    list[19]:=FormatFloat(ctfl, MavGetFloatFromBuf(msg, 22));
     list[20]:='m';
     list[21]:='';
     list[22]:='Climb rate=';
-    list[23]:=FormatFloat('0.00', MavGetFloatFromBuf(msg, 26));
+    list[23]:=FormatFloat(ctfl, MavGetFloatFromBuf(msg, 26));
     list[24]:='m/s';
     list[25]:='';
     list[26]:='Heading [°]=';
@@ -1110,8 +1134,8 @@ procedure PayloadSensorData(msg: TMAVmessage; var list: TStringList);
      lat, lon, alt: single;
 
   begin
-    list[22]:='Alt=';
-    list[23]:=FormatFloat('0.00', MavGetFloatFromBuf(msg, 26));
+    list[22]:='Alt_MSL=';
+    list[23]:=FormatFloat(ctfl, MavGetFloatFromBuf(msg, 26));
     list[24]:='[m]';
     list[25]:='';
     if MavGetGPSdata(msg, 30, lat, lon, alt) then  {Get lat, lon and alt from GPS data}
@@ -1188,6 +1212,7 @@ begin
       3:   PayloadGimbalPosition(msg, datalist);        {Sys_Id Camera?; 1Hz }
       8:   PayloadCGPS_5GHz(msg, datalist);
       20:  PayloadPARAM_REQUEST_READ(msg, datalist);
+//      57:  Payload?
       76:  PayloadAnswerParamRequest(msg, datalist);
       255: PayloadSensorData(msg, datalist);
     end;
@@ -2188,7 +2213,7 @@ var
   inlist, addlist_raw, addlist_data: TStringList;
   msgIDlist, msgtypelist, sensortypelist, actiontypelist: TStringList;
   i, k, fileformat, msgcounter, msgsum: integer;
-  maxColumns: integer;
+  maxColumns, ErrorCounterMAV, ErrorCounterSR24: integer;
 
 
   procedure ReadOneYMAVfile(fn: string);
@@ -2213,6 +2238,12 @@ var
           if DoFilterYMAV(Mavmsg) then begin
             addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp));
             addlist_data.Add(YMAVdataToMergelist(MAVmsg, tp));
+          end;
+
+          if (lineindex<inlist.Count) and
+             (inlist[lineindex].Split([sep])[1]<>v1magic) then begin
+            inc(ErrorCounterMAV);
+//            MessageDlg('Test','Error at '+IntToStr(lineindex+1), mtError, [mbOK], 0);
           end;
         end;
       end else
@@ -2242,7 +2273,10 @@ var
         if DoFilterSR24(SR24data) then begin
           addlist_raw.Add(RawMessageToMergelist(SR24data, tp));
           addlist_data.Add(SR24dataToMergelist(SR24data, tp));
-        end
+        end;
+        if (lineindex<inlist.Count) and
+           (HexStrValueToInt(inlist[lineindex].Split([sep])[1])<>header1) then
+          inc(ErrorCounterSR24);
       end else
         inc(lineindex);
     until lineindex>=inlist.Count;
@@ -2271,7 +2305,10 @@ begin
   edSumMsgType.Text:='';
   lbActionType.Items.Clear;
   lbSensorType.Items.Clear;
-
+  edErrorCounterMAV.Text:='';
+  edErrorCounterSR24.Text:='';
+  ErrorCounterMAV:=0;
+  ErrorCounterSR24:=0;
 
   Screen.Cursor:=crHourGlass;
   MaxColumns:=NumPayloadBytes+lenfix;
@@ -2352,6 +2389,10 @@ begin
       end;
       edSumMsgType.Text:=IntToStr(msgsum);
     end;
+    if ErrorCounterMAV>0 then
+      edErrorCounterMAV.Text:=IntToStr(ErrorCounterMAV);
+    if ErrorCounterSR24>0 then
+      edErrorCounterSR24.Text:=IntToStr(ErrorCounterSR24);
 
     if cbAutoSave.Checked then begin                       {Autosave merged lists}
       SaveDialog.FileName:=ChangeFileExt(OpenDialog.Files[0], '')+'_decoded_raw'+csvext;

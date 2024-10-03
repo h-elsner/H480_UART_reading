@@ -195,7 +195,7 @@ begin
     0:   result:='Heartbeat?';
     1:   result:='SYS_STATUS';
     2:   result:='System_Time';
-    24:  result:='GPS_RAW';
+    24:  result:='GPS_RAW_INT';
     27:  result:='RAW_IMU';
     29:  result:='SCALED_PRESSURE';
     30:  result:='ATTITUDE';

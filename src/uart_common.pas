@@ -122,7 +122,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.4 2024-09-18';
+  AppVersion='V1.4 2024-10-02';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
