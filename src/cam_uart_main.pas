@@ -1939,9 +1939,9 @@ begin
 end;
 
 procedure TForm1.gridRawGetCellHint(Sender: TObject; ACol, ARow: Integer;
-  var HintText: String);
+                                                    var HintText: String);
 begin
-  HintText:=gridData.Cells[aCol, aRow];
+  HintText:=gridRaw.Cells[aCol, aRow];
   if aRow>0 then begin
     HintText:=GetRawCellInfo(gridRaw.Cells[aCol, aRow], aCol, aRow);
   end;
