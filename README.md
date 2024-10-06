@@ -5,4 +5,6 @@ Now I tried to bring together the communication of
     • ST16 <-> SR24 and 
     • Autopilot (FC = Flight controller) <-> CGO3+.
 
+![Overview](overview.png)
+
 I got a Saleae Logic Analyzer with four channels. To record I use this analyzer software: https://www.saleae.com/pages/downloads
