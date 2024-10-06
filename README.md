@@ -7,4 +7,4 @@ Now I tried to bring together the communication of
 
 ![Overview](overview.png)
 
-I got a Saleae Logic Analyzer with four channels. To record I use this analyzer software: https://www.saleae.com/pages/downloads
+I used Saleae Logic Analyzer with four channels. To record I use this analyzer software: https://www.saleae.com/pages/downloads
