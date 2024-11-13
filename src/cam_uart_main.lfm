@@ -164,7 +164,7 @@ object Form1: TForm1
         Top = 16
         Width = 464
         Caption = 'Filter YMAVlink'
-        ClientHeight = 318
+        ClientHeight = 303
         ClientWidth = 462
         TabOrder = 1
         object rgMsgID: TRadioGroup

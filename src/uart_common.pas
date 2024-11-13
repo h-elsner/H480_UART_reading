@@ -122,14 +122,14 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.4 2024-10-02';
+  AppVersion='V1.4 2024-10-10';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
 
   hexid='$';
   msgtpformat='nn:ss.zzz';
-  secpd=86400;                                      {seconds per day}
+  secpd=86400;                                     {seconds per day}
   MinimalBytesPerMessage=6;
 
   UNIXTime=25569;                                  {1.1.1970 00:00 relative to Lazarus Time}

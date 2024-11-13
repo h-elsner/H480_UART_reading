@@ -35,7 +35,7 @@ type
 
 {Public functions and procedures}
 
-function MavGetIntFromBuf(msg: TMAVmessage; pos, numbytes: integer): uint64; {Position/Anzahl Bytes}
+function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64; {Position/Anzahl Bytes}
 function MavGetFloatFromBuf(msg: TMAVmessage; pos: integer): single; {Position, Länge immer 4}
 function MavGetUInt16(msg: TMAVmessage; pos: integer): uint16;
 function MavGetInt16(msg: TMAVmessage; pos: integer): int16;
@@ -76,14 +76,14 @@ procedure MavGetuInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: uint16)
 
 implementation
 
-function MavGetIntFromBuf(msg: TMAVmessage; pos, numbytes: integer): uint64; {Position/Anzahl Bytes}
+function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64; {Position/Anzahl Bytes}
 var
   i: integer;
 
 begin
   result:=0;
-  for i:=0 to numbytes-1 do begin
-    result:=result+msg.msgbytes[i+pos]*(256**i);
+  for i:=0 to 7 do begin
+    result:=result+msg.msgbytes[pos+i]*(256**i);
   end;
 end;
 
@@ -373,8 +373,8 @@ var
 
 begin
   result:=false;
-  la:=MavGetIntFromBuf(data, pos, 4);
-  lo:=MavGetIntFromBuf(data, pos+4, 4);
+  la:=MavGetInt32(data, pos);
+  lo:=MavGetInt32(data, pos+4);
   lat:=la/10000000;
   lon:=lo/10000000;
   alt:=MavGetFloatFromBuf(data, pos+8);
@@ -384,16 +384,16 @@ end;
 
 procedure MavGetInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: int16);
 begin
-  v1:=MavGetIntFromBuf(data, pos, 2);
-  v2:=MavGetIntFromBuf(data, pos+2, 2);
-  v3:=MavGetIntFromBuf(data, pos+4, 2);
+  v1:=MavGetInt16(data, pos);
+  v2:=MavGetInt16(data, pos+2);
+  v3:=MavGetInt16(data, pos+4);
 end;
 
 procedure MavGetuInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: uint16);
 begin
-  v1:=MavGetIntFromBuf(data, pos, 2);
-  v2:=MavGetIntFromBuf(data, pos+2, 2);
-  v3:=MavGetIntFromBuf(data, pos+4, 2);
+  v1:=MavGetUInt16(data, pos);
+  v2:=MavGetUInt16(data, pos+2);
+  v3:=MavGetUInt16(data, pos+4);
 end;
 
 function  VoltToStr(v: byte): string;
