@@ -42,7 +42,7 @@ Camera Heartbeat:
 0x00	?                                           9
 0x7D	? Status flags?                             10
 0x00	?                                           11
-0x01	? could probably be MAV Version 1           12
+0x01	? probably could be MAV Version 1           12
 0x3D	CRC low                                     13
 0x40	CRC high                                    14
 

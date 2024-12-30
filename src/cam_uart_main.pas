@@ -7,6 +7,10 @@ Both bitrate: 115200
 
 File type stored in btnDecode.Tag
 
+
+https://yuneecpilots.com/threads/cgo3-serial-link.18528/#post-208460
+
+
 *)
 
 unit cam_uart_main;
@@ -124,11 +128,12 @@ type
     btnClearRed: TButton;
     btnSaveProto: TButton;
     cbAutoSave: TCheckBox;
-    cbDocu: TCheckBox;
+    cbCoordForDocu: TCheckBox;
     cbOrOther: TCheckBox;
     Chart1: TChart;
     AutoScaleLeft: TAutoScaleAxisTransform;
     AutoScaleRight: TAutoScaleAxisTransform;
+    cbRawWithCRC: TCheckBox;
     edErrorCounterMAV: TEdit;
     edErrorCounterSR24: TEdit;
     edLength: TEdit;
@@ -302,30 +307,30 @@ var
 
   begin
   result:=false;
-  z:=0;                                                 {Counter for unsynced bytes}
-  buf:=empty;                                           {Reset buffer}
+  z:=0;                                                  {Counter for unsynced bytes}
+  buf:=empty;                                            {Reset buffer}
   repeat
-    buf[0]:=UARTreadByteFromText;                       {read byte by byte}
-    if (buf[2]=header1) and                             {check if valid message (header+plausible length)}
+    buf[0]:=UARTreadByteFromText;                        {read byte by byte}
+    if (buf[2]=header1) and                              {check if valid message (header+plausible length)}
        (buf[1]=header2) and
        (buf[0]<maxlen) and
        (buf[0]>0) then begin
-      data[0]:=buf[2];                                  {Copy header and length to message data}
+      data[0]:=buf[2];                                   {Copy header and length to message data}
       data[1]:=buf[1];
       data[2]:=buf[0];
-      for i:=3 to buf[0]+2 do                           {Read the other bytes of the dataset (payload + CRC)}
+      for i:=3 to buf[0]+2 do                            {Read the other bytes of the dataset (payload + CRC)}
         data[i]:=UARTreadByteFromText;
       z:=0;
-      result:=true;                                     {Message is valid but CRC was not checked (no need at this time)}
-    end else begin                                      {Shift buffer right}
+      result:=true;                                      {Message is valid but CRC was not checked (no need at this time)}
+    end else begin                                       {Shift buffer right}
       buf[2]:=buf[1];
       buf[1]:=buf[0];
-      inc(z);                                           {Count bytes to prevent overflow}
+      inc(z);                                            {Count bytes to prevent overflow}
     end;
-  until result or                                       {Valid message but w/o CRC check}
-       (z>maxlen);                                      {Too long message}
+  until result or                                        {Valid message but w/o CRC check}
+       (z>maxlen);                                       {Too long message}
 
-  if Form1.cbDocu.Checked then begin
+  if Form1.cbCoordForDocu.Checked then begin
     if (data[3]=2) and (data[9]=docufix) then
       data[8]:=data[8]-random(20)+2
     else
@@ -379,7 +384,7 @@ begin
         valid:=true;
       end;
     end;
-    if Form1.cbDocu.Checked then begin
+    if Form1.cbCoordForDocu.Checked then begin           {Create fake coordinates}
       if (msgbytes[11]=docufix) and ((msgid=2) or (msgid=8)) then
         msgbytes[10]:=msgbytes[10]-Random(100)+2
       else
@@ -391,7 +396,7 @@ begin
               msgbytes[11]:=msgbytes[11]-Random(50)+2;
     end;
   end;
-  inc(lineIdx);                                            {Next message byte}
+  inc(lineIdx);                                          {Next message byte}
 end;
 
 function MessageListToStr(list: TStringList): string;
@@ -436,7 +441,7 @@ begin
     aCol:=1;
     aRow:=1;
     grid.Cells[0, 1]:='00000000';
-    grid.RowCount:=1;                                   {Löschen der vorherigen Anzeigen}
+    grid.RowCount:=1;                                    {Löschen der vorherigen Anzeigen}
     grid.RowCount:=(BinaryStream.Size div 16) +2;
     BinaryStream.Position:=0;
     for i:=1 to BinaryStream.Size-1 do begin
@@ -456,24 +461,32 @@ begin
   end;
 end;
 
-function RawmessageToMergelist(msg: TPayLoad; timept: string): string; overload;
+function RawmessageToMergelist(msg: TPayLoad; timept: string; WithCRC: boolean=false): string; overload;
 var
-  i: integer;
+  i, num: integer;
 
 begin
   result:=timept;
-  for i:=0 to msg[2]+1 do
+  num:=msg[2]+1;
+  if WithCRC then
+    num:=num+2;
+  for i:=0 to num do
     result:=result+dtsep+IntToHex(msg[i], 2);
 end;
 
-function RawMessageToMergelist(msg: TMAVmessage; timept: string): string; overload;
+function RawMessageToMergelist(msg: TMAVmessage; timept: string; WithCRC: boolean=false): string; overload;
 var
-  i: integer;
+  i, num: integer;
 
 begin
   result:=timept;
-  for i:=0 to msg.msgbytes[1]+7 do
+  num:=msg.msgbytes[1]+7;
+  if WithCRC then
+    num:=num+2;
+  for i:=0 to num do
     result:=result+dtsep+IntToHex(msg.msgbytes[i], 2);
+  if WithCRC then
+    result:=result+dtsep+IntToHex(CRC16MAV(msg, LengthFixPartFE), 4);
 end;
 
 {for gridData/data CSV the fix part:
@@ -1479,7 +1492,7 @@ begin
   result:='';
   datalist:=TStringList.Create;
   try
-    lenfix:=8;               {default lenght of fix part which is in decimal}
+    lenfix:=LengthFixPartFE;     {default lenght of fix part which is in decimal}
 
     case msg[3] of           {Fix part and payload w/o decoding}
        2: Telemetry;
@@ -1794,7 +1807,7 @@ begin
           binfile.Position:=0;
           repeat
             byte1:=binfile.ReadByte;
-            if byte1=BCmagic then begin
+            if byte1=MagicBC then begin
               byte3:=binfile.ReadByte;      {len}
               byte1:=binfile.ReadByte;
               byte1:=binfile.ReadByte;
@@ -1802,7 +1815,7 @@ begin
               if (byte1=1) and (byte2=1) then begin
                 for i:=1 to byte3+4 do
                   byte1:=binfile.ReadByte;
-                if byte1=BCmagic then
+                if byte1=MagicBC then
                   exit(4);
               end;
             end;
@@ -2291,19 +2304,19 @@ var
     StatusBar1.Panels[0].Text:=IntToStr(inlist.Count-1);
     repeat
       tp:=SetLengthTime(inlist[lineindex].Split([sep])[0]);
-      if inlist[lineindex].Split([sep])[1]=v1magic then begin
+      if inlist[lineindex].Split([sep])[1]=MagicFE_AsText then begin
         MAVmsg:=NewYMavMessage(inlist, lineindex);
         if MAVmsg.valid then begin
           msgIDlist.Add(Format('%.3d', [MAVmsg.msgid]));
           if MAVmsg.msgid=255 then
             sensortypelist.Add(Format('%.3d', [MAVmsg.msgbytes[13]]));
           if DoFilterYMAV(Mavmsg) then begin
-            addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp));
+            addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, cbRawWithCRC.Checked));
             addlist_data.Add(YMAVdataToMergelist(MAVmsg, tp));
           end;
 
           if (lineindex<inlist.Count) and
-             (inlist[lineindex].Split([sep])[1]<>v1magic) then begin
+             (inlist[lineindex].Split([sep])[1]<>MagicFE_AsText) then begin
             inc(ErrorCounterMAV);
 //            MessageDlg('Test','Error at '+IntToStr(lineindex+1), mtError, [mbOK], 0);
           end;
@@ -2333,7 +2346,7 @@ var
           actiontypelist.Add(Format('%.3d', [SR24data[4]]));
 
         if DoFilterSR24(SR24data) then begin
-          addlist_raw.Add(RawMessageToMergelist(SR24data, tp));
+          addlist_raw.Add(RawMessageToMergelist(SR24data, tp, cbRawWithCRC.Checked));
           addlist_data.Add(SR24dataToMergelist(SR24data, tp));
         end;
         if (lineindex<inlist.Count) and
@@ -2373,7 +2386,7 @@ begin
   ErrorCounterSR24:=0;
 
   Screen.Cursor:=crHourGlass;
-  MaxColumns:=NumPayloadBytes+lenfix;
+  MaxColumns:=NumPayloadBytes+LengthFixPartFE+2;
   FillRawGridHeader(MaxColumns);
   FillDataMergeHeader(MaxColumns);
   Application.ProcessMessages;
