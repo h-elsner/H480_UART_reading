@@ -1,3 +1,37 @@
+{********************************************************}
+{                                                        }
+{       Read and send data to Yuneec CGO3+ camera        }
+{                                                        }
+{       Copyright (c) 2024/2025    Helmut Elsner         }
+{                                                        }
+{       Compiler: FPC 3.2.3   /    Lazarus 3.7           }
+{                                                        }
+{ Pascal programmers tend to plan ahead, they think      }
+{ before they type. We type a lot because of Pascal      }
+{ verboseness, but usually our code is right from the    }
+{ start. We end up typing less because we fix less bugs. }
+{           [Jorge Aldo G. de F. Junior]                 }
+{********************************************************}
+
+(*
+This source is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2 of the License, or (at your option)
+any later version.
+
+This code is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
+
+A copy of the GNU General Public License is available on the World Wide Web
+at <http://www.gnu.org/copyleft/gpl.html>. You can also obtain it by writing
+to the Free Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+Boston, MA 02110-1335, USA.
+
+*******************************************************************************)
+
+
 (*
 Recording Async Serial with Saleao Logicanalyzer
 Add analyzer Async Serial for each channel
@@ -122,7 +156,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.4 2024-10-10';
+  AppVersion='V1.5 2025-01-03';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
@@ -210,6 +244,7 @@ end;
 
 function ASCIIOutput(b: byte): string;
 begin
+  if b=0 then exit(' ');
   if (b>31) and (b<127) then
     result:=chr(b)
   else

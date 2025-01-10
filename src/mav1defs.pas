@@ -5,7 +5,7 @@ unit mav1defs;
 interface
 
 uses
-  SysUtils, math;
+  SysUtils, math, DateUtils;
 
 const
   dzfl='0.0';                {Formatierung für FormatFloat}
@@ -57,6 +57,8 @@ function MsgIDToStr(id: byte): string;
 function SysIDToStr(id: byte): string;
 function TargetIDToStr(id: byte): string;
 function SensorTypeToStr(id: byte): string;  {Message BC}
+function MAV_PARAM_TYPEtoStr(const id: byte): string; {Specifies the datatype of a MAVLink parameter}
+function MAV_RESULTtoStr(const id: byte): string;
 function YGC_TypeToStr(y: byte): string;
 function YGC_CommandToStr(y: byte): string;
 function SeverityToStr(severity: byte): string;
@@ -82,7 +84,8 @@ function MavGetChValue(data: TMAVmessage; chnr: byte; pos: integer=27): uint16; 
 function GPSaccHToStr(const g: byte): string;
 procedure MavGetInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: int16);
 procedure MavGetuInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: uint16);
-
+function GetSerialNumber(const msg: TMAVmessage; pos: byte): string;
+function GetSystemTime(const data: TMAVmessage; pos: integer; var time: TDateTime): string;
 
 implementation
 
@@ -139,7 +142,7 @@ end;
 function CheckCRC16X25(const msg: TMAVmessage; LengthFixPart: byte): boolean;
 begin
   result:=(CRC16X25(msg, LengthFixPart+2)=0);
-end;  {result should be zero over all bytes except Record ID including CRC}
+end;
 
 procedure CRC_accumulate(const b: byte; var crcAccum: uint16);
 var
@@ -258,11 +261,12 @@ begin
   case id of
     1: result:='Autopilot';                   {Flight controller (Autopilot)}
     2: result:='Gimbal';
-    3, 200: result:='Gimbal';                 {200 in nested Sensor data}
+    3: result:='Gimbal';
     4: result:='Remote';
     6: result:='SysID6';
     10: result:='YQGC';
     88: result:='Undef';
+    200: result:='Tool/GUI';
   end;
 end;
 
@@ -277,30 +281,45 @@ begin
     5: result:='WiFi? (5)';
     10: result:='YQGC';
     88: result:='Undef';
+    200: result:='Tool/GUI';
     99: result:='Remote';                    {Platzhalter für virtuelle Sender ID}
   end;
 end;
 
+{https://github.com/mavlink/mavlink/tree/master/message_definitions/v1.0
+ https://github.com/mavlink/mavlink/blob/master/message_definitions/v1.0/common.xml
+ }
 function SensorTypeToStr(id: byte): string;  {Message BC}
 begin
-  result:=rsUnknown_+' '+IntToStr(id);
+  result:=rsUnknown_+IntToStr(id);
   case id of
-    0:   result:='Heartbeat?';
+    0:   result:='Heartbeat';
     1:   result:='SYS_STATUS';
-    2:   result:='System_Time';
+    2:   result:='SYSTEM_TIME';
+    21:  result:='PARAM_REQUEST_LIST';       {Request all parameters of this component.
+                                              After this request, all parameters are emitted.
+                                              The parameter microservice is documented at
+                                              https://mavlink.io/en/services/parameter.html}
+    22:  result:='PARAM_VALUE';
+    23:  result:='PARAM_SET';
     24:  result:='GPS_RAW_INT';
+    25:  result:='GPS_STATUS';
     27:  result:='RAW_IMU';
     29:  result:='SCALED_PRESSURE';
     30:  result:='ATTITUDE';
+    32:  result:='LOCAL_POSITION_NED';
     33:  result:='GLOBAL_POSITION';
     35:  result:='RC_CHANNELS_RAW';
     36:  result:='SERVO_OUTPUT_RAW';
     42:  result:='MISSION_CURRENT';
     51:  result:='MISSION_REQUEST_INT';
-    52:  result:='Sys_type?';                      {Text: CGO3_Plus / TyphoonH}
+    52:  result:='System_type';                    {Text: CGO3_Plus / TyphoonH}
+    56:  result:='SERIAL_NUMBER';
     62:  result:='NAV_CONTROLLER_OUTPUT';
     65:  result:='RC_CHANNELS';
     74:  result:='VRF_HUD';
+    76:  result:='COMMAND_LONG';
+    77:  result:='COMMAND_ACK';
     150: result:='SENSOR_OFFSETS';
     163: result:='AHRS';                           {Attitude and Heading Reference System}
     165: result:='HW_STATUS';
@@ -309,6 +328,40 @@ begin
     178: result:='AHRS2';
     193: result:='EKF_STATUS_REPORT';              {Extended Kalman Filter}
     253: result:='STATUS_TEXT';
+  end;
+end;
+
+function MAV_PARAM_TYPEtostr(const id: byte): string;        {Specifies the datatype of a MAVLink parameter}
+begin
+  result:='PARAM_TYPE '+intToStr(id);
+  case id of
+    1: result:='UINT8';
+    2: result:='INT8';
+    3: result:='UINT16';
+    4: result:='INT16';
+    5: result:='UINT32';
+    6: result:='INT32';
+    7: result:='UINT64';
+    8: result:='INT64';
+    9: result:='REAL32';
+    10: result:='REAL64';
+  end;
+end;
+
+function MAV_RESULTtoStr(const id: byte): string;
+begin
+  result:='RESULT '+intToStr(id);
+  case id of
+    0: result:='ACCEPTED';
+    1: result:='TEMPORA';
+    2: result:='DENIED';
+    3: result:='UNSUPPORTED';
+    4: result:='FAILED';
+    5: result:='IN_PROGRESS';
+    6: result:='CANCELLED';
+    7: result:='COMMAND_LONG_ONLY';
+    8: result:='COMMAND_INT_ONLY';
+    9: result:='COMMAND_UNSUPPORTED_MAV_FRAME';
   end;
 end;
 
@@ -340,21 +393,21 @@ function SeverityToStr(severity: byte): string;
 begin
   result:=IntToStr(severity);
   case severity of
-    0: result:='EMERGENCY'; {System is unusable. This is a "panic" condition}
-    1: result:='ALERT';     {Action should be taken immediately. Indicates error
+    0: result:='EMERGENCY';  {System is unusable. This is a "panic" condition}
+    1: result:='ALERT    ';  {Action should be taken immediately. Indicates error
                              in non-critical systems}
-    2: result:='CRITICAL';  {Action must be taken immediately. Indicates failure
+    2: result:='CRITICAL ';  {Action must be taken immediately. Indicates failure
                              in a primary system}
-    3: result:='ERROR';     {Indicates an error in secondary/redundant systems}
-    4: result:='WARNING';   {Indicates about a possible future error if this
+    3: result:='ERROR    ';  {Indicates an error in secondary/redundant systems}
+    4: result:='WARNING  ';  {Indicates about a possible future error if this
                              is not resolved within a given timeframe. Example
                              would be a low battery warning}
-    5: result:='NOTICE';    {An unusual event has occurred, though not an error
+    5: result:='NOTICE   ';  {An unusual event has occurred, though not an error
                              condition. This should be investigated for the
                              root cause.}
-    6: result:='INFO';      {Normal operational messages. Useful for logging.
+    6: result:='INFO     ';  {Normal operational messages. Useful for logging.
                              No action is required for these messages.}
-    7: result:='DEBUG';     {Useful non-operational messages that can assist in
+    7: result:='DEBUG    ';  {Useful non-operational messages that can assist in
                              debugging. These should not occur during normal
                              operation}
   end;
@@ -510,6 +563,20 @@ end;
 function  GPSaccHToStr(const g: byte): string;
 begin
   result:=FormatFloat(dzfl, g/20);
+end;
+
+function GetSerialNumber(const msg: TMAVmessage; pos: byte): string;
+begin
+  result:='';
+  result:=IntToHex(MavGetUInt32(msg, pos), 8)+'-'+
+          IntToHex(MavGetUInt32(msg, pos+4), 8)+'-'+
+          IntToHex(MavGetUInt32(msg, pos+8), 8);
+end;
+
+function GetSystemTime(const data: TMAVmessage; pos: integer; var time: TDateTime): string;
+begin
+  time:=UNIXtoDateTime(MavGetUInt64(data, pos) div 1000000);      {µs}
+  result:=FormatDateTime('YYYY-MM-DD hh:nn:ss', time);
 end;
 
 end.

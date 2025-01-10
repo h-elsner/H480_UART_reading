@@ -1,3 +1,36 @@
+{********************************************************}
+{                                                        }
+{ Read UART data from Logic analyzer at Yuneec drones    }
+{                                                        }
+{       Copyright (c) 2024/2025    Helmut Elsner         }
+{                                                        }
+{       Compiler: FPC 3.2.3   /    Lazarus 3.7           }
+{                                                        }
+{ Pascal programmers tend to plan ahead, they think      }
+{ before they type. We type a lot because of Pascal      }
+{ verboseness, but usually our code is right from the    }
+{ start. We end up typing less because we fix less bugs. }
+{           [Jorge Aldo G. de F. Junior]                 }
+{********************************************************}
+
+(*
+This source is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2 of the License, or (at your option)
+any later version.
+
+This code is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
+
+A copy of the GNU General Public License is available on the World Wide Web
+at <http://www.gnu.org/copyleft/gpl.html>. You can also obtain it by writing
+to the Free Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+Boston, MA 02110-1335, USA.
+
+*******************************************************************************)
+
 (*
 Auswertung von MAVlink V1 Messages von der CGO3+ Kamera
 
@@ -23,7 +56,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
   StdCtrls, Menus, ActnList, Grids, XMLPropStorage, Buttons, TAGraph, math,
   TAIntervalSources, TASeries, TATransformations, dateutils, mav1defs, SR24_dec,
-  uart_common;
+  uart_common, Types;
 
 Const
   sep=',';
@@ -34,6 +67,7 @@ Const
   tab2='  ';
   leer='&';        {Identifier not to output to stringgrids}
   docufix=28;
+  trenner='====================================';
 
   SaleaeHeader='Time [s],Value,Parity Error,Framing Error';
   rsSaved='File saved to: ';
@@ -47,7 +81,8 @@ Const
   rsPL='PL';
   rsMagic='Magic';
   rsSensor='Sensor';
-  rsTime='Time';
+  rsTime='Time since boot';
+  rsLenSequSysID=';Len;Seq_No;Sys_ID;';
   rsLoad='Load a logic analyzer recording of UART from ';
   rsDecode=' to decode messages';
   rsSave='Save the data from the ';
@@ -65,10 +100,12 @@ Const
 
   titDecode='Load file to decode...';
   titConvert='Load file to convert to binary...';
+  titFilterUSBrec='Load file from USB recording...';
   titMerge='Select CSV files to decode...';
   titSaveRaw='Save Raw table as CSV file...';
   titSaveData='Save Data table as CSV file...';
   titHexView='Load file for hex view...';
+  titSensorFile='Save sensor file...';
 
   errInvalidFile=' is an invalid file';
   errFilter='No match found - check filter criteria!';
@@ -84,19 +121,21 @@ Const
   hntClose='Close application';
   hntReLoad='Reload the same files with new filter';
   RawGridHeader=rsTime+dtsep+rsMagic;                        {Use dtsep (;)}
-  DataMergeHeader=rsTime+dtsep+rsSeqNo+dtsep+rsMsgType+dtsep+'ActionType;Sys_ID;Target_ID;RSSI[%]';
+  DataMergeHeader=rsTime+dtsep+rsSeqNo+dtsep+rsMsgType+';ActionType;Sys_ID;Target_ID;RSSI[%]';
+  DataBCHeader=RawGridHeader+rsLenSequSysID+'Target_ID;Message name';
 
   RawSR24Header='Hdr1;Hdr2;Len;Msg_Type;Counter/Action;_?_;RSSI;PackageCtnr';
   SR24DataHeader=rsTime+dtsep+rsMsgType+dtsep+'ActionType;RSSI[%]';
 
-  RawMavHeaderCommon=rsMagic+';Len;Seq_No;Sys_ID;Comp_ID;';
-  RawMavHeaderTarget=rsTargetID+dtsep+'SubTarget_ID;Msg_ID;Msg_Type/PL1';
+  RawMavHeaderCommon=rsMagic+rsLenSequSysID+'Comp_ID;';
+  RawMavHeaderTarget=rsTargetID+';SubTarget_ID;Msg_ID;Msg_Type/PL1';
   YMAVDataHeader=rsTime+dtsep+rsMsgID+dtsep+rsSysID+dtsep+rsTargetID;
 
   clGridHighlightRows=clForm;
   clMsgID=clGradientActiveCaption;
   clActionType=clGradientActiveCaption;
 
+  ParamFloatFormat='0.0';
 
 
 type
@@ -134,6 +173,7 @@ type
     AutoScaleLeft: TAutoScaleAxisTransform;
     AutoScaleRight: TAutoScaleAxisTransform;
     cbRawWithCRC: TCheckBox;
+    cbSensorFile: TCheckBox;
     edErrorCounterMAV: TEdit;
     edErrorCounterSR24: TEdit;
     edLength: TEdit;
@@ -143,6 +183,10 @@ type
     gbFilter: TGroupBox;
     gbOtherMsgID: TGroupBox;
     gbSR24Filter: TGroupBox;
+    lblSerialNoOut: TLabel;
+    lblSerialNo: TLabel;
+    lblDateTimeOut: TLabel;
+    lblDateTime: TLabel;
     lbActionType: TListBox;
     lblActionType: TLabel;
     lblLenght: TLabel;
@@ -156,11 +200,13 @@ type
     lbNumMsgID: TListBox;
     lbNumMsgType: TListBox;
     lbSensorType: TListBox;
+    Memo1: TMemo;
     mnData: TPopupMenu;
     mnDataSave: TMenuItem;
     mnDoChartLeft: TMenuItem;
     mnDoChartRight: TMenuItem;
     mnSaveProto: TMenuItem;
+    plLeft: TPanel;
     rgMsgID: TRadioGroup;
     rgMsgType: TRadioGroup;
     rgOutputFormat: TRadioGroup;
@@ -169,6 +215,7 @@ type
     Separator5: TMenuItem;
     serLeft: TLineSeries;
     serRight: TLineSeries;
+    tsText: TTabSheet;
     tsSettings: TTabSheet;
     tsStatistics: TTabSheet;
     transformLeft: TChartAxisTransformations;
@@ -233,12 +280,18 @@ type
       var HintText: String);
     procedure gridRawPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
       aState: TGridDrawState);
+    procedure Memo1MouseWheelDown(Sender: TObject; Shift: TShiftState;
+      MousePos: TPoint; var Handled: Boolean);
+    procedure Memo1MouseWheelUp(Sender: TObject; Shift: TShiftState;
+      MousePos: TPoint; var Handled: Boolean);
     procedure mnDoChartLeftClick(Sender: TObject);
     procedure mnDoChartRightClick(Sender: TObject);
     procedure rgDataTypeClick(Sender: TObject);
     procedure rgOutputFormatClick(Sender: TObject);
     procedure rgSysIDClick(Sender: TObject);
     procedure rgTargetIDClick(Sender: TObject);
+    procedure FilterBCmessagesFromUSBrecording(fn: string);
+
   private
     function  CheckRawFileFormat(fn: string): byte;
     procedure FillRawSR24Header(const len: integer=maxlen);
@@ -246,6 +299,7 @@ type
     procedure FillRawMAVHeader(len: integer);
     procedure FillMAVDataHeader(headerstring: string; len: integer);
     procedure FillRawGridHeader(len: integer);
+    procedure FillDataBCheader(len: integer);
     procedure FillDataMergeHeader(len: integer);
     function  FilenameProposal: string;
     function  DoFilterYMAV(msg: TMAVmessage): boolean;
@@ -256,7 +310,6 @@ type
     procedure CheckIfFilterIsSetSR24;
     procedure ConvertToBinary(fn: string);
     procedure HexViewABinaryFile(fn: string);
-    procedure DecodeSensorFile(fn: string);           {for further development}
     procedure InfoInvalidFile(fn: string);
     procedure InfoSaleaeRecording(fn: string; execute: boolean=false);
     procedure FillgridRaw(var list: TStringList);    {addlist_raw}
@@ -264,6 +317,7 @@ type
     function  GetDataCellInfo(aCol, aRow: integer): string;
     procedure DoChart(chart: byte);        {1 left, 2 right}
     procedure DecodeUART;
+    procedure DecodeBCmsg(const msg: TMAVmessage; RowNumber: integer);
   public
 
   end;
@@ -568,12 +622,6 @@ begin
   list[pos+7]:='';
   if goalt then
     WriteAltMSL(list, pos+8, alt);
-end;
-
-function GetSystemTime(data: TMAVmessage; pos: integer; var time: TDateTime): string;
-begin
-  time:=UNIXtoDateTime(MavGetUInt64(data, pos) div 1000000);      {µs}
-  result:=FormatDateTime('YYYY-MM-DD hh:nn:ss', time);
 end;
 
 function GetRawCellInfo(s: string; aCol, aRow: integer): string;
@@ -1556,6 +1604,18 @@ begin
   gridRaw.AutoSizeColumns;
 end;
 
+procedure TForm1.FillDataBCheader(len: integer);
+var
+  pos: integer;
+
+begin
+  gridData.RowCount:=1;
+  gridData.ColCount:=len;
+  pos:=FillFixpartOfHeader(gridData, DataBCHeader, 0);
+  NumberingColumns(gridData, 'Byte', pos, len-pos);
+  gridData.AutoSizeColumns;
+end;
+
 procedure TForm1.FillDataMergeHeader(len: integer);
 var
   pos: integer;
@@ -1755,6 +1815,7 @@ end;
  3: SR24 message    >6
  4: Sensor file 0xBC
  5: Framing Error
+ 6: USB-Recording
  }
 
 function TForm1.CheckRawFileFormat(fn: string): byte;
@@ -1770,8 +1831,10 @@ begin
   try
     inlist.LoadFromFile(fn);
     if Inlist.Count>0 then begin
+      if pos('USBMONV', inlist[0])=1 then
+        exit(6);
       if trim(inlist[0])=SaleaeHeader then
-        result:=1;
+        exit(1);
       if InList.Count>MinimalBytesPerMessage then begin
         for i:=1 to Inlist.Count-MinimalBytesPerMessage do begin
 //          if pos(sep+sep+'Error', inlist[i])>0 then
@@ -1831,13 +1894,6 @@ begin
     btnDecode.Tag:=result;                         {for further development}
     inlist.Free;
   end;
-end;
-
-procedure TForm1.DecodeSensorFile(fn: string);     {for further development}
-begin
-  StatusBar1.Panels[4].Text:=fn+' is a Sensor file from H480 flight log';
-
-  {ToDo}
 end;
 
 function TForm1.DoFilterYMAV(msg: TMAVmessage): boolean;
@@ -1983,6 +2039,7 @@ begin
   btnReLoad.Enabled:=false;
   randomize;
   gridRaw.AlternateColor:=clGridHighlightRows;
+  Memo1.Text:='';
 end;
 
 procedure TForm1.FormDropFiles(Sender: TObject; const FileNames: array of string);
@@ -2032,6 +2089,22 @@ begin
       14: if (gridRaw.Cells[1, aRow]='FE') and (gridRaw.Cells[8, aRow]='FF') then
         gridRaw.Canvas.Brush.Color:=clActionType;
     end;
+  end;
+end;
+
+procedure TForm1.Memo1MouseWheelDown(Sender: TObject; Shift: TShiftState;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+  if ssCtrl in Shift then begin
+    Memo1.Font.Size:=Memo1.Font.Size-1;
+  end;
+end;
+
+procedure TForm1.Memo1MouseWheelUp(Sender: TObject; Shift: TShiftState;
+  MousePos: TPoint; var Handled: Boolean);
+begin
+  if ssCtrl in Shift then begin
+    Memo1.Font.Size:=Memo1.Font.Size+1;
   end;
 end;
 
@@ -2216,7 +2289,7 @@ end;
 
 procedure TForm1.acProtocolExecute(Sender: TObject);
 const
-  trenner=' - ';
+  separator=' - ';
   spacer='       ';
 
 var
@@ -2236,9 +2309,9 @@ begin
     list.Add('');
 
     if lbMsgType.Items.Count>0 then begin
-      list.Add('SR24 : Messages'+trenner+'message counter');
+      list.Add('SR24 : Messages'+separator+'message counter');
       for i:=0 to lbMsgType.Items.Count-1 do
-        list.Add(lbMsgType.Items[i]+trenner+lbNumMsgType.Items[i]);
+        list.Add(lbMsgType.Items[i]+separator+lbNumMsgType.Items[i]);
       if lbActionType.Items.Count>0 then begin
         list.Add(spacer+'Action types');
         for i:=0 to lbActionType.Items.Count-1 do
@@ -2283,13 +2356,249 @@ begin
     DecodeUART;
 end;
 
+function ReadBCmessage(msg: TMAVmessage): uint32;  {[ms]}
+begin
+  result:=0;
+  case msg.msgid of
+//    2: result:=MAVgetUInt32(msg, 14);   {strange values, not usable}
+    29, 30, 32, 33, 35, 65: result:=MAVgetUInt32(msg, 6);
+  end;
+end;
+
+{Filter payload from USB traffic recorded by
+ ELTIMA Software GmbH usb_analyzer trial version.
+ Result is a ZIP file, unpack before to binary file started with magic USBMONV3
+ https://www.softpedia.com/get/System/System-Miscellaneous/USB-Analyzer.shtml
+}
+
+procedure TForm1.DecodeBCmsg(const msg: TMAVmessage; RowNumber: integer);
+var
+  i: integer;
+
+  procedure SYS_TIME;
+  var
+    time: TDateTime;
+
+  begin
+    lblDateTimeOut.Caption:=GetSystemTime(msg, 6, time);;
+  end;
+
+  procedure PARAM_VALUE;
+  var
+    i: byte;
+    s: string;
+
+  begin
+    s:='';
+    gridData.Cells[7, RowNumber]:=FormatFloat(ParamFloatFormat, MavGetFloatFromBuf(msg, 6));
+    gridData.Cells[8, RowNumber]:='';
+    gridData.Cells[9, RowNumber]:=MAV_PARAM_TYPEtoStr(msg.msgbytes[30]);
+    gridData.Cells[10, RowNumber]:='';
+    for i:=14 to 29 do begin
+      gridData.Cells[i+1, RowNumber]:=CharOutput(msg.msgbytes[i]);
+      s:=s+ASCIIOutput(msg.msgbytes[i]);
+    end;
+    Memo1.Lines.Add(s+' = '+gridData.Cells[7, RowNumber]);
+  end;
+
+  procedure PARAM_SET;
+  var
+    i: byte;
+    s: string;
+
+  begin
+    s:='';
+    gridData.Cells[7, RowNumber]:=FormatFloat(ParamFloatFormat, MavGetFloatFromBuf(msg, 6));
+    gridData.Cells[8, RowNumber]:='';
+    gridData.Cells[9, RowNumber]:=MAV_PARAM_TYPEtoStr(msg.msgbytes[28]);
+    gridData.Cells[10, RowNumber]:='';
+    for i:=12 to 27 do begin
+      gridData.Cells[i+1, RowNumber]:=CharOutput(msg.msgbytes[i]);
+      s:=s+ASCIIOutput(msg.msgbytes[i]);
+    end;
+    Memo1.Lines.Add(s+' = '+gridData.Cells[7, RowNumber]);
+  end;
+
+  procedure SERIAL_NUMBER;
+  begin
+    lblSerialNoOut.Caption:=GetSerialNumber(msg, 6);
+  end;
+
+  procedure COMMAND_LONG;
+  var
+    i: byte;
+
+  begin
+    for i:=6 to msg.msglength+LengthFixPartBC-1 do
+      gridData.Cells[i+1, RowNumber]:=OutputFormatByte(msg.msgbytes[i]);
+    gridData.Cells[35, RowNumber]:='ID = ';
+    gridData.Cells[36, RowNumber]:=IntToStr(MavGetUInt16(msg, 34));
+    Memo1.Lines.Add('COMMAND_LONG: '+gridData.Cells[35, RowNumber]+
+                                     gridData.Cells[36, RowNumber]);
+    for i:=0 to 6 do begin
+      Memo1.Lines.Add(' param'+intToStr(i+1)+' = '+
+                      FormatFloat('0', MavGetFloatFromBuf(msg, i*4+6)));
+    end;
+(*  Alternative
+    for i:=0 to 6 do begin
+      Memo1.Lines.Add(' param'+intToStr(i+1)+' = '+
+                      IntToHex(MavGetUint32(msg, i*4+6), 8));
+    end;      *)
+  end;
+
+  procedure COMMAND_ACK;
+  begin
+    gridData.Cells[7, RowNumber]:='ID = ';
+    gridData.Cells[8, RowNumber]:=IntToStr(MAVgetUInt16(msg, 6));
+    gridData.Cells[9, RowNumber]:=MAV_RESULTtoStr(msg.msgbytes[8]);
+  end;
+
+  procedure TEXT_MSG;
+  var
+    i: integer;
+    s: string;
+
+  begin
+    s:=SeverityToStr(msg.msgbytes[6])+': ';
+    for i:=7 to msg.msglength+LengthFixPartBC-1 do begin
+      gridData.Cells[i+1, RowNumber]:=CharOutput(msg.msgbytes[i]);
+      s:=s+ASCIIOutput(msg.msgbytes[i]);
+    end;
+    Memo1.Lines.Add(s);
+  end;
+
+begin
+  case msg.msgid of
+    2:   SYS_TIME;
+    22:  PARAM_VALUE;
+    23:  PARAM_SET;
+    56:  SERIAL_NUMBER;
+    76:  COMMAND_LONG;
+    77:  COMMAND_ACK;
+    253: TEXT_MSG;
+  else
+    for i:=6 to msg.msglength+LengthFixPartBC-1 do
+      gridData.Cells[i+1, RowNumber]:=OutputFormatByte(msg.msgbytes[i]);
+  end;
+end;
+
+procedure TForm1.FilterBCmessagesFromUSBrecording(fn: string);
+var
+  infn, SensorBytes: TMemorystream;
+  sensortypelist: TStringList;
+  msg: TMAVmessage;
+  b: byte;
+  i: integer;
+  boottime, tme: uint32;
+
+begin
+  infn:=TMemoryStream.Create;
+  SensorBytes:=TMemoryStream.Create;
+  sensortypelist:=TStringList.Create;
+  sensortypelist.Sorted:=true;
+  sensortypelist.Duplicates:=dupIgnore;
+  Screen.Cursor:=crHourGlass;
+  lbSensorType.Items.Clear;
+  FillRawGridHeader(264);
+  FillDataBCheader(264);
+  Application.ProcessMessages;
+  gridRaw.BeginUpdate;
+  gridData.BeginUpdate;
+  boottime:=0;
+  try
+    infn.LoadFromFile(fn);
+    if infn.Size>100 then begin
+
+      Memo1.Lines.Clear;
+      Memo1.Lines.Add(fn);
+      Memo1.Lines.Add('');
+
+      infn.Position:=8;
+      while infn.Position<(infn.Size-LengthFixPartBC) do begin
+        repeat                                     {RecordID suchen $BC}
+          b:=infn.ReadByte;
+        until (b=MagicBC) or (infn.Position>=infn.Size-LengthFixPartBC);
+        msg.msglength:=infn.ReadByte;              {Länge Payload mit CRC}
+        infn.ReadByte;
+        b:=infn.ReadByte;
+        if (b=$C8) or (b=1) then begin             {Valid SysID}
+          infn.Position:=infn.Position-4;
+          infn.ReadBuffer(msg.msgbytes, msg.msglength+LengthFixPartBC+2);  {Länge Datensatz mit FixPart und CRC}
+          msg.sysid:=msg.msgbytes[3];
+          msg.targetid:=msg.msgbytes[4];
+          msg.msgid:=msg.msgbytes[5];
+//          msg.valid:=CheckCRC16X25(msg, LengthFixPartBC);
+          sensortypelist.Add(Format('%.3d', [msg.msgid]));
+
+          tme:=ReadBCmessage(msg);
+          if tme>0 then
+            boottime:=tme;
+          b:=LengthFixPartBC+1;                    {With CRC}
+          if cbSensorFile.Checked then
+            for i:=0 to msg.msglength+b do
+              SensorBytes.WriteByte(msg.msgbytes[i]);
+
+// Raw table
+          if not cbRawWithCRC.Checked then
+            b:=LengthFixPartBC-1;
+          gridRaw.RowCount:=gridRaw.RowCount+1;
+          gridData.RowCount:=gridData.RowCount+1;
+          gridRaw.Cells[0, gridRaw.RowCount-1]:=FormatFloat('0.000', boottime/1000);
+          gridData.Cells[0, gridData.RowCount-1]:=gridRaw.Cells[0, gridRaw.RowCount-1];
+          for i:=0 to msg.msglength+b do
+            gridRaw.Cells[i+1, gridRaw.RowCount-1]:=IntToHex(msg.msgbytes[i], 2);
+
+// Data table
+          gridData.Cells[1, gridData.RowCount-1]:=IntToHex(msg.msgbytes[0], 2);
+          for i:=1 to 4 do
+            gridData.Cells[i+1, gridData.RowCount-1]:=IntToStr(msg.msgbytes[i]);
+          gridData.Cells[6, gridData.RowCount-1]:=SensorTypeToStr(msg.msgid);
+          DecodeBCmsg(msg, gridData.RowCount-1);
+        end;
+      end;
+    end;
+    FillMsgList(sensortypelist, lbSensorType, 2);
+
+    Memo1.Lines.Add('');
+    Memo1.Lines.Add(trenner);
+    Memo1.Lines.Add('');
+    for i:=0 to lbSensorType.Items.Count-1 do
+      Memo1.Lines.Add(lbSensorType.Items[i]);
+
+
+    if cbSensorFile.Checked and (SensorBytes.Size>LengthFixPartBC) then begin
+      SaveDialog.Title:=titSensorFile;
+      SaveDialog.FileName:=ExtractFilePath(OpenDialog.Files[0])+
+                           'Sensor'+PathDelim+'Sensor_00001.bin';
+      if SaveDialog.Execute then
+        SensorBytes.SaveToFile(SaveDialog.FileName);
+    end;
+  finally
+    gridRaw.EndUpdate;
+    gridData.EndUpdate;
+    infn.Free;
+    SensorBytes.Free;
+    sensortypelist.Free;
+    Screen.Cursor:=crDefault;
+  end;
+end;
+
 procedure TForm1.DecodeUART;
 var
   inlist, addlist_raw, addlist_data: TStringList;
+  SensorBytes: TMemoryStream;
   msgIDlist, msgtypelist, sensortypelist, actiontypelist: TStringList;
   i, k, fileformat, msgcounter, msgsum: integer;
   maxColumns, ErrorCounterMAV, ErrorCounterSR24: integer;
 
+  procedure CreateSensorFile(msg: TMAVmessage);
+  var
+    i: integer;
+
+  begin
+    for i:=LengthFixPartFE to msg.msgbytes[9]+LengthFixPartBC+LengthFixPartFE+1 do
+      SensorBytes.WriteByte(msg.msgbytes[i]);
+  end;
 
   procedure ReadOneYMAVfile(fn: string);
   var
@@ -2308,8 +2617,11 @@ var
         MAVmsg:=NewYMavMessage(inlist, lineindex);
         if MAVmsg.valid then begin
           msgIDlist.Add(Format('%.3d', [MAVmsg.msgid]));
-          if MAVmsg.msgid=255 then
+          if MAVmsg.msgid=255 then begin
             sensortypelist.Add(Format('%.3d', [MAVmsg.msgbytes[13]]));
+            if cbSensorFile.Checked then
+              CreateSensorFile(MAVmsg);
+          end;
           if DoFilterYMAV(Mavmsg) then begin
             addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, cbRawWithCRC.Checked));
             addlist_data.Add(YMAVdataToMergelist(MAVmsg, tp));
@@ -2368,6 +2680,9 @@ begin
   actiontypelist:=TStringList.Create;
   sensortypelist:=TStringList.Create;
 
+  SensorBytes:=TMemoryStream.Create;
+  SensorBytes.Size:=0;
+
   actiontypelist.Sorted:=true;
   actiontypelist.Duplicates:=dupIgnore;
   sensortypelist.Sorted:=true;
@@ -2401,7 +2716,11 @@ begin
   try
     StatusBar1.Panels[0].Text:=IntToStr(OpenDialog.Files.Count);
     StatusBar1.Panels[4].Text:=OpenDialog.Files[0];
-
+    if CheckRawFileFormat(OpenDialog.FileName)=6 then begin
+      btnReLoad.Enabled:=false;
+      FilterBCmessagesFromUSBrecording(OpenDialog.FileName);
+      exit;
+    end;
     for i:=0 to OpenDialog.Files.Count-1 do begin
       fileformat:=CheckRawFileFormat(OpenDialog.Files[i]);              {Find out what file format it is}
       case fileformat of
@@ -2409,7 +2728,7 @@ begin
         1: InfoSaleaeRecording(OpenDialog.Files[i], false);
         2: ReadOneYMAVfile(OpenDialog.Files[i]);                        {for merge}
         3: ReadOneSR24File(OpenDialog.Files[i]);
-        4: DecodeSensorFile(OpenDialog.Files[i]);
+//        4: DecodeSensorFile(OpenDialog.Files[i]);
       end;
     end;
 
@@ -2475,8 +2794,15 @@ begin
       SaveDialog.FileName:=ChangeFileExt(OpenDialog.Files[0], '')+'_decoded_data'+csvext;
       addlist_data.SaveToFile(SaveDialog.FileName);
     end;
+
+    if cbSensorFile.Checked and (SensorBytes.Size>LengthFixPartBC) then begin
+      SaveDialog.Title:=titSensorFile;
+      SaveDialog.FileName:=ChangeFileExt(OpenDialog.Files[0], '.bin')+'_Sensor.bin';
+      if SaveDialog.Execute then
+        SensorBytes.SaveToFile(SaveDialog.FileName);
+    end;
+
     gridData.AutoSizeColumns;
-    gridRaw.AutoSizeColumn(0);
     PageControl1.ActivePage:=tsData;
     gridData.Row:=1;
     griddata.Col:=2;
@@ -2491,6 +2817,7 @@ begin
     msgtypelist.Free;
     sensortypelist.Free;
     actiontypelist.Free;
+    SensorBytes.Free;
     Screen.Cursor:=crDefault;
   end;
 end;
