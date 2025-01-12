@@ -156,7 +156,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.5 2025-01-03';
+  AppVersion='V1.5 2025-01-10';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
