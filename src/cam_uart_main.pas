@@ -491,12 +491,12 @@ begin
   grid.BeginUpdate;
   try
     grid.ColCount:=34;
+    grid.RowCount:=1;                                    {Löschen der vorherigen Anzeigen}
     FillBinaryHeader(grid);
     aCol:=1;
     aRow:=1;
-    grid.Cells[0, 1]:='00000000';
-    grid.RowCount:=1;                                    {Löschen der vorherigen Anzeigen}
     grid.RowCount:=(BinaryStream.Size div 16) +2;
+    grid.Cells[0, 1]:='00000000';
     BinaryStream.Position:=0;
     for i:=1 to BinaryStream.Size-1 do begin
       b:=BinaryStream.ReadByte;
@@ -1834,7 +1834,7 @@ begin
       if pos('USBMONV', inlist[0])=1 then
         exit(6);
       if trim(inlist[0])=SaleaeHeader then
-        exit(1);
+        result:=1;
       if InList.Count>MinimalBytesPerMessage then begin
         for i:=1 to Inlist.Count-MinimalBytesPerMessage do begin
 //          if pos(sep+sep+'Error', inlist[i])>0 then
@@ -1844,7 +1844,7 @@ begin
           byte3:=HexStrValueToInt(inlist[i+2].Split([sep])[1]);
 
           if (byte1=v1magicbyte) and                                       {magic}
-             (byte2>12) and (byte2<NumPayloadBytes) and                    {len}
+             (byte2<NumPayloadBytes) and                    {len}
              (HexStrValueToInt(inlist[i+4].Split([sep])[1])=0) and         {CompID}
              (HexStrValueToInt(inlist[i+6].Split([sep])[1])=0) then begin  {SubTargetID}
              CheckIfFilterIsSetMAV;
@@ -2051,6 +2051,7 @@ begin
   for i:=0 to high(filenames) do
     OpenDialog.Files.Add(FileNames[i]);
   OpenDialog.FileName:=FileNames[0];
+  Application.BringToFront;
   DecodeUART;
 end;
 
