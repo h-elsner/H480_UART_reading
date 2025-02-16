@@ -394,65 +394,90 @@ var
   end;
 end;
 
-procedure CommonFixPartMessage(var MAVmsgFixPart: TMAVmessage; list: TStringlist; var lineidx: integer);
-begin
-  MAVmsgFixPart.time:=SecondsToDateTime(list[lineidx].Split([sep])[0]);
-  MAVmsgFixPart.msgbytes[0]:=v1magicbyte;
-  inc(lineIdx);
-  MAVmsgFixPart.msgLength:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
-  MAVmsgFixPart.msgbytes[1]:=MAVmsgFixPart.msgLength;
-  inc(lineIdx);
-  MAVmsgFixPart.msgbytes[2]:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
-  inc(lineIdx);
-  MAVmsgFixPart.sysid:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
-  MAVmsgFixPart.msgbytes[3]:=MAVmsgFixPart.sysid;
-  inc(lineIdx);
-  MAVmsgFixPart.msgbytes[4]:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
-  inc(lineIdx);
-end;
-
-function NewYMavMessage(var list: TStringList; var lineidx: integer): TMAVmessage;
+function NewYMavMessageFE(list: TStringList; var lineidx: integer): TMAVmessage;
 var
   i: integer;
 
 begin
   result:=ClearMAVmessage;
   with result do begin
-    if lineidx<list.Count-8 then begin
-      CommonFixPartMessage(result, list, lineidx);
+    if lineidx<list.Count-LengthFixPartFE then begin
+      time:=SecondsToDateTime(list[lineidx].Split([sep])[0]);
+      msgbytes[0]:=MagicFE;
+      inc(lineIdx);
+      msgLength:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
+      msgbytes[1]:=msgLength;
+
       if (msglength=0) or (time=0) then begin
         valid:=false;
         exit;
       end;
-      TargetID:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
-      msgbytes[5]:=TargetID;
-      inc(lineIdx);
-      msgbytes[6]:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
-      inc(lineIdx);
-      msgID:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
-      msgbytes[7]:=msgID;
-      if lineidx+msgLength<list.Count then begin
-        for i:=8 to msgLength+9 do begin
+
+      if lineidx+LengthFixPartFE+msgLength<list.Count then begin
+        for i:=2 to msgLength+LengthFixPartFE+1 do begin
           inc(lineIdx);
           msgbytes[i]:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
         end;
         valid:=true;
       end;
-    end;
-    if Form1.cbCoordForDocu.Checked then begin           {Create fake coordinates}
-      if (msgbytes[11]=docufix) and ((msgid=2) or (msgid=8)) then
-        msgbytes[10]:=msgbytes[10]-Random(100)+2
-      else
-        if msgid=255 then
-          if msgbytes[33]=docufix then
-            msgbytes[32]:=msgbytes[32]-Random(50)+2
-          else
-            if msgbytes[12]=docufix then
-              msgbytes[11]:=msgbytes[11]-Random(50)+2;
+
+      sysid:=msgbytes[3];
+      targetid:=msgbytes[5];
+      msgid:=msgbytes[7];
+
+      if Form1.cbCoordForDocu.Checked then begin           {Create fake coordinates}
+        if (msgbytes[11]=docufix) and ((msgid=2) or (msgid=8)) then
+          msgbytes[10]:=msgbytes[10]-Random(100)+2
+        else
+          if msgid=255 then
+            if msgbytes[33]=docufix then
+              msgbytes[32]:=msgbytes[32]-Random(50)+2
+            else
+              if msgbytes[12]=docufix then
+                msgbytes[11]:=msgbytes[11]-Random(50)+2;
+      end;
+
     end;
   end;
   inc(lineIdx);                                          {Next message byte}
 end;
+
+function NewYMavMessageFD(list: TStringList; var lineidx: integer): TMAVmessage;
+var
+  i: integer;
+
+begin
+  result:=ClearMAVmessage;
+  with result do begin
+    if lineidx<list.Count-LengthFixPartFD then begin
+      time:=SecondsToDateTime(list[lineidx].Split([sep])[0]);
+      msgbytes[0]:=MagicFD;
+      inc(lineIdx);
+      msgLength:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
+      msgbytes[1]:=msgLength;
+
+      if (msglength=0) or (time=0) then begin
+        valid:=false;
+        exit;
+      end;
+
+      if lineidx+msgLength+LengthFixPartFD<list.Count then begin
+        for i:=2 to msgLength+LengthFixPartFD+1 do begin
+          inc(lineIdx);
+          msgbytes[i]:=HexStrValueToInt(list[lineidx].Split([sep])[1]);
+        end;
+        valid:=true;
+      end;
+
+      sysid:=msgbytes[5];
+      targetid:=msgbytes[6];
+      msgid:=msgbytes[7];
+      msgid32:=MavGetUint32(result, 7) and $FFFFFF;
+    end;
+  end;
+  inc(lineIdx);                                          {Next message byte}
+end;
+
 
 function MessageListToStr(list: TStringList): string;
 var
@@ -1303,7 +1328,7 @@ begin
 end;
 
 
-function YMAVdataToMergelist(msg: TMAVmessage; timept: string): string;
+function YMAVdataToMergelist_FE(msg: TMAVmessage; timept: string): string;
 var
   i: integer;
   datalist: TStringList;
@@ -1316,7 +1341,7 @@ begin
 // Fix part
     CreateDataTable(datalist, timept);
     datalist[1]:=IntToStr(msg.msgbytes[2]);        {1 Sequ_No}
-    datalist[2]:=MsgIDToStr(msg.msgid);            {2 Msg_ID}
+    datalist[2]:=MsgIDToStr_FE(msg.msgid);         {2 Msg_ID}
     datalist[4]:=SysIDToStr(msg.sysid);            {4 Sys_ID}
     datalist[5]:=TargetIDToStr(msg.targetid);      {5 Target_ID}
 
@@ -1326,7 +1351,7 @@ begin
       for i:=11 to msg.msglength+5 do  {Only the 'inner' payload of the BC-messages w/o its CRC}
         datalist.Add(Form1.OutputFormatByte(msg.msgbytes[i]))
     end else                               {All other messages}
-      for i:=8 to msg.msglength+7 do
+      for i:=8 to msg.msglength+LengthFixPartFE-1 do
         datalist.Add(Form1.OutputFormatByte(msg.msgbytes[i]));
 
     case msg.msgid of
@@ -1346,6 +1371,38 @@ begin
     datalist.Free;
   end;
 end;
+
+function YMAVdataToMergelist_FD(msg: TMAVmessage; timept: string): string;
+var
+  i: integer;
+  datalist: TStringList;
+
+begin
+  result:='';
+  datalist:=TStringList.Create;
+  try
+
+// Fix part
+    CreateDataTable(datalist, timept);
+    datalist[1]:=IntToStr(msg.msgbytes[4]);        {1 Sequ_No}
+    datalist[2]:=MsgIDtoStr(msg.msgid32);          {2 Msg_ID}
+    datalist[4]:=SysIDToStr(msg.sysid);            {4 Sys_ID}
+    datalist[5]:=TargetIDToStr(msg.targetid);      {5 Target_ID}
+
+// Payload
+    for i:=LengthFixPartFD to msg.msglength+LengthFixPartFD-1 do
+      datalist.Add(Form1.OutputFormatByte(msg.msgbytes[i]));
+
+//    case msg.msgid32 of
+//        Overwrite hex data with decoded values
+//    end;
+
+    result:=MessageListToStr(datalist);
+  finally
+    datalist.Free;
+  end;
+end;
+
 
 //===========================================================================
 
@@ -1812,11 +1869,12 @@ end;
 {Source of recorded raw file from Saleae UART recording
  0: Invalid
  1: Other file Saleae recording
- 2: YMAV message    >12
+ 2: YMAV FE message    >12
  3: SR24 message    >6
  4: Sensor file 0xBC
  5: Framing Error
- 6: USB-Recording
+ 6: USB-Recording     (FD messages)
+ 7: YMAV FD message
  }
 
 function TForm1.CheckRawFileFormat(fn: string): byte;
@@ -1844,7 +1902,7 @@ begin
           byte2:=HexStrValueToInt(inlist[i+1].Split([sep])[1]);
           byte3:=HexStrValueToInt(inlist[i+2].Split([sep])[1]);
 
-          if (byte1=v1magicbyte) and                                       {magic}
+          if (byte1=MagicFE) and                                           {magic FE}
              (byte2<NumPayloadBytes) and                    {len}
              (HexStrValueToInt(inlist[i+4].Split([sep])[1])=0) and         {CompID}
              (HexStrValueToInt(inlist[i+6].Split([sep])[1])=0) then begin  {SubTargetID}
@@ -1852,7 +1910,14 @@ begin
             exit(2);
           end;
 
-          if (byte1=header1) and (byte2=header2) and                       {magic}
+          if (byte1=MagicFD) and                                           {magic FD}
+             (byte2<NumPayloadBytes) and                    {len}
+             (byte3=0) then begin                                          {Flags}
+             CheckIfFilterIsSetMAV;
+            exit(7);
+          end;
+
+          if (byte1=header1) and (byte2=header2) and                       {magic SR24}
              (byte3>6) and (byte3<maxlen) and                              {len}
              (HexStrValueToInt(inlist[i+4].Split([sep])[1]) in ValidMsgTypes) then begin
             CheckIfFilterIsSetSR24;
@@ -2608,6 +2673,7 @@ begin
   gridRaw.BeginUpdate;
   gridData.BeginUpdate;
   boottime:=0;
+  tme:=0;
   try
     infn.LoadFromFile(fn);
     if infn.Size>100 then begin
@@ -2706,7 +2772,7 @@ var
       SensorBytes.WriteByte(msg.msgbytes[i]);
   end;
 
-  procedure ReadOneYMAVfile(fn: string);
+  procedure ReadOneYMAVfileFE(fn: string);
   var
     lineindex: integer;
     MAVmsg: TMAVmessage;
@@ -2720,7 +2786,7 @@ var
     repeat
       tp:=SetLengthTime(inlist[lineindex].Split([sep])[0]);
       if inlist[lineindex].Split([sep])[1]=MagicFE_AsText then begin
-        MAVmsg:=NewYMavMessage(inlist, lineindex);
+        MAVmsg:=NewYMavMessageFE(inlist, lineindex);
         if MAVmsg.valid then begin
           msgIDlist.Add(Format('%.3d', [MAVmsg.msgid]));
           if MAVmsg.msgid=255 then begin
@@ -2730,7 +2796,7 @@ var
           end;
           if DoFilterYMAV(Mavmsg) then begin
             addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, cbRawWithCRC.Checked));
-            addlist_data.Add(YMAVdataToMergelist(MAVmsg, tp));
+            addlist_data.Add(YMAVdataToMergelist_FE(MAVmsg, tp));
           end;
 
           if (lineindex<inlist.Count) and
@@ -2738,6 +2804,46 @@ var
             inc(ErrorCounterMAV);
 //            MessageDlg('Test','Error at '+IntToStr(lineindex+1), mtError, [mbOK], 0);
           end;
+        end;
+      end else
+        inc(lineindex);
+    until lineindex>=inlist.Count;
+    inlist.Clear;
+  end;
+
+  procedure ReadOneYMAVfileFD(fn: string);      {New cameras like E90}
+  var
+    lineindex: integer;
+    MAVmsg: TMAVmessage;
+    tp: string;
+    i: integer;
+
+  begin
+    btnReLoad.Enabled:=true;;
+    inlist.LoadFromFile(fn);
+    lineindex:=1;
+    StatusBar1.Panels[0].Text:=IntToStr(inlist.Count-1);
+    repeat
+      tp:=SetLengthTime(inlist[lineindex].Split([sep])[0]);
+      if inlist[lineindex].Split([sep])[1]=MagicFD_AsText then begin
+        MAVmsg:=NewYMavMessageFD(inlist, lineindex);
+        if MAVmsg.valid then begin
+          msgIDlist.Add(Format('%.3d', [MAVmsg.msgid32]));
+
+          if DoFilterYMAV(Mavmsg) then begin
+            addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, cbRawWithCRC.Checked));
+            addlist_data.Add(YMAVdataToMergelist_FD(MAVmsg, tp));
+          end;
+
+          if (lineindex<inlist.Count) and
+             (inlist[lineindex].Split([sep])[1]<>MagicFD_AsText) then begin
+            inc(ErrorCounterMAV);
+//            MessageDlg('Test','Error at '+IntToStr(lineindex+1), mtError, [mbOK], 0);
+          end;
+
+          if cbSensorFile.Checked then
+            for i:=0 to MAVmsg.msglength+LengthFixPartFD+1 do
+              SensorBytes.WriteByte(MAVmsg.msgbytes[i]);
         end;
       end else
         inc(lineindex);
@@ -2833,9 +2939,10 @@ begin
       case fileformat of
         0: InfoInvalidFile(OpenDialog.Files[i]);
         1: InfoSaleaeRecording(OpenDialog.Files[i], false);
-        2: ReadOneYMAVfile(OpenDialog.Files[i]);                        {for merge}
+        2: ReadOneYMAVfileFE(OpenDialog.Files[i]);                        {for merge}
         3: ReadOneSR24File(OpenDialog.Files[i]);
 //        4: DecodeSensorFile(OpenDialog.Files[i]);
+        7: ReadOneYMAVfileFD(OpenDialog.Files[i]);
       end;
     end;
 

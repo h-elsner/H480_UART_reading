@@ -22,6 +22,7 @@ const
   MagicFD=$FD;
   MagicFE=$FE;
   MagicFE_AsText='0xFE';
+  MagicFD_AsText='0xFD';
 
   rsUnknown_='Unknown_';
   rsUndef_='Undef_';
@@ -54,7 +55,7 @@ function MavGetUInt32(msg: TMAVmessage; pos: integer): uint32;
 function MavGetInt32(msg: TMAVmessage; pos: integer): int32;
 
 function ClearMAVmessage: TMAVmessage;
-function MsgIDToStr(id: byte): string;
+function MsgIDToStr_FE(id: byte): string;
 function SysIDToStr(id: byte): string;
 function TargetIDToStr(id: byte): string;
 function SensorTypeToStr(id: byte): string;  {Message BC}
@@ -87,6 +88,7 @@ procedure MavGetInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: int16);
 procedure MavGetuInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: uint16);
 function GetSerialNumber(const msg: TMAVmessage; pos: byte): string;
 function GetSystemTime(const data: TMAVmessage; pos: integer; var time: TDateTime): string;
+function MsgIDtoStr(id: uint32): string;
 
 implementation
 
@@ -241,7 +243,7 @@ begin
     result.msgbytes[i]:=0;                    {Fix part empty}
 end;
 
-function MsgIDToStr(id: byte): string;
+function MsgIDToStr_FE(id: byte): string;
 begin
   result:=rsUnknown_+' '+IntToStr(id)+' (0x'+HexStr(id, 2)+')';
   case id of
@@ -282,6 +284,8 @@ begin
     5: result:='WiFi? (5)';
     10: result:='YQGC';
     88: result:='Undef';
+    100: result:='Camera #1';
+    154: result:='Gimbal #1';
     200: result:='Tool/GUI';
     99: result:='Remote';                    {Platzhalter für virtuelle Sender ID}
   end;
@@ -579,6 +583,274 @@ begin
   time:=UNIXtoDateTime(MavGetUInt64(data, pos) div 1000000);      {µs}
   result:=FormatDateTime('YYYY-MM-DD hh:nn:ss', time);
 end;
+
+{Message Struktur:
+ https://github.com/mavlink/c_library_v2/tree/master/common
+      inconsistent !
+ https://github.com/YUNEEC/MavlinkLib/blob/master/message_definitions/common.xml
+ https://github.com/YUNEEC/MavlinkLib}
+
+function MsgIDtoStr(id: uint32): string;
+begin
+  result:=rsUnknown_+' MAV_CMD'+' $'+IntToHex(id, 2)+
+          ' ('+IntToStr(id)+')';                   {default}
+  case id of
+      0:  result:='heartbeat';                     {Supported Msg Länge 9}
+      1:  result:='sys_status';                    {Supported Msg Länge 1F}
+      2:  result:='system_time';                   {Länge 0B}
+      4:  result:='ping';
+      5:  result:='change_operator_control';
+      6:  result:='change_operator_control_ack';
+      7:  result:='auth_key';
+      8:  result:='link_node_status';
+     11:  result:='set_mode';
+     19:  result:='param_ack_transaction';
+     20:  result:='param_request_read';
+     21:  result:='param_request_list';
+     22:  result:='param_value';
+     23:  result:='param_set';
+     24:  result:='gps_raw_int';                   {Supported Msg Länge 31/32}
+     25:  result:='gps_status';                    {Länge 1}
+     26:  result:='scaled_imu';
+    $1B:  result:='raw_imu';
+    $1C:  result:='raw_pressure';
+    $1D:  result:='scaled_pressure';
+    $1E:  result:='attitude';                      {Länge 1C}
+    $1F:  result:='attitude_quaternion';           {Supported Msg Länge 20}
+    $20:  result:='local_position_ned';            {Länge 1C}
+    $21:  result:='global_position_int';           {Supported Msg Länge 1C}
+    $22:  result:='rc_channels_scaled';
+    $23:  result:='rc_channels_raw';
+    $24:  result:='servo_output_raw';              {Länge 10 oder 15}
+    $25:  result:='mission_request_partial_list';
+    $26:  result:='mission_write_partial_list';
+    $27:  result:='mission_item';
+    $28:  result:='mission_request';
+    $29:  result:='mission_set_current';
+    $2A:  result:='mission_current';
+     43:  result:='mission_request_list';
+    $2C:  result:='mission_count';                 {Länge 3 oder 5}
+    $2D:  result:='mission_clear_all';
+    $2E:  result:='mission_item_reached';
+    $2F:  result:='mission_ack';
+    $30:  result:='set_gps_global_origin';
+    $31:  result:='gps_global_origin';
+    $32:  result:='param_map_rc';
+     51:  result:='mission_request_int';
+     52:  result:='mission_changed';
+
+     54:  result:='safety_set_allowed_area';
+     55:  result:='safety_allowed_area';
+     56:  result:='SERIAL_NUMBER';
+    $3D:  result:='attitude_quaternion_cov';
+    $3E:  result:='nav_controller_output';
+    $3F:  result:='global_position_int_cov';
+    $40:  result:='local_position_ned_cov';
+    $41:  result:='rc_channels';                   {Supported Msg Länge 2A}
+    $42:  result:='request_data_stream';
+    $43:  result:='data_stream';
+    $45:  result:='manual_control';                {Länge 0B}
+    $46:  result:='rc_channels_override';          {Länge 11}
+    $49:  result:='mission_item_int';
+    $4A:  result:='vfr_hud';                       {Länge 11}
+    $4B:  result:='command_int';
+    $4C:  result:='command_long';                  {Länge 20}
+    $4D:  result:='command_ack';
+    $4E:  result:='command_cancel';                {78: UTC time stamp, Boot time}
+    $4F:  result:='command_long_stamped';          {79: not supported anymore}
+    $51:  result:='manual_setpoint';
+    $52:  result:='set_attitude_target';
+    $53:  result:='attitude_target';               {Länge 24}
+    $54:  result:='set_position_target_local_ned';
+    $55:  result:='position_target_local_ned';     {Länge 33}
+    $56:  result:='set_position_target_global_int';
+    $57:  result:='position_target_global_int';    {Länge 3}
+    $59:  result:='local_position_ned_system_global_offset';
+    $5A:  result:='hil_state';
+    $5B:  result:='hil_controls';
+    $5C:  result:='hil_rc_inputs_raw';
+    $5D:  result:='hil_actuator_controls';
+
+    $64:  result:='optical_flow';
+    $65:  result:='global_vision_position_estimate';
+    $66:  result:='vision_position_estimate';
+    $67:  result:='vision_speed_estimate';
+    $68:  result:='vicon_position_estimate';
+    $69:  result:='highres_imu';                   {Länge 3E}
+    $6A:  result:='optical_flow_rad';
+    $6B:  result:='hil_sensor';
+    $6C:  result:='sim_state';
+    $6D:  result:='radio_status';
+    $6E:  result:='file_transfer_protocol';
+    $6F:  result:='timesync';                      {Länge 0D}
+    $70:  result:='camera_trigger';
+    $71:  result:='hil_gps';
+    $72:  result:='hil_optical_flow';
+    $73:  result:='hil_state_quaternion';
+    116:  result:='scaled_imu2';
+    $75:  result:='log_request_list';
+    $76:  result:='log_entry';
+    $77:  result:='log_request_data';
+    $78:  result:='log_data';
+    $79:  result:='log_erase';
+    $7A:  result:='log_request_end';
+    $7B:  result:='gps_inject_data';
+    $7C:  result:='gps2_raw';
+    $7D:  result:='power_status';
+    $7E:  result:='serial_control';
+    $7F:  result:='gps_rtk';
+    $80:  result:='gps2_rtk';
+    $81:  result:='scaled_imu3';
+    $82:  result:='data_transmission_handshake';
+    $83:  result:='encapsulated_data';
+    $84:  result:='distance_sensor';
+    $85:  result:='terrain_request';
+    $86:  result:='terrain_data';
+    $87:  result:='terrain_check';
+    $88:  result:='terrain_report';
+    $89:  result:='scaled_pressure2';
+    $8A:  result:='att_pos_mocap';
+    $8B:  result:='set_actuator_control_target';
+    $8C:  result:='actuator_control_target';       {Länge 14}
+    $8D:  result:='altitude';                      {Länge 20}
+    $8E:  result:='resource_request';
+    $8F:  result:='scaled_pressure3';
+    $90:  result:='follow_target';
+    $92:  result:='control_system_state';
+    $93:  result:='battery_status';
+    $94:  result:='autopilot_version';             {Länge 34, 48, 4C}
+    149:  result:='landing_target';
+
+    150: result:='SENSOR_OFFSETS';
+    162:  result:='fence_status';
+    163: result:='AHRS';                           {Attitude and Heading Reference System}
+    165: result:='HW_STATUS';
+    172: result:='DATA96';                         {Whatever this is...}
+    173: result:='RANGEFINDER';
+    178: result:='AHRS2';
+    192:  result:='mag_cal_report';
+    193: result:='EKF_STATUS_REPORT';              {Extended Kalman Filter}
+
+    225:  result:='efi_status';
+
+{MESSAGE IDs 180 - 229: Space for custom messages in
+ individual projectname_messages.xml files -->}
+(*  201:  result:='sens_power';                    {I do not know if used}
+    202:  result:='sens_MPTT';
+    203:  result:='aslctrl_data';
+    204:  result:='aslctrl_debug';
+    205:  result:='asluav_status';
+    206:  result:='ekf_ext';                       {Wind speed and such stuff}
+    207:  result:='asl_obctrl';
+    208:  result:='sens_atmos';                    {Atmospheric sensors}
+    209:  result:='sens_batmon';                   {Battery monitor}
+    210:  result:='fw_soaring_data';               {fixed wing...}
+    211:  result:='sensorpod_status';
+    212:  result:='sens_power_board';
+    213:  result:='gsm_link_status';               {LTE too}       *)
+
+    230:  result:='estimator_status';              {Länge 2A}
+    $E7:  result:='wind_cov';                      {Länge 20}
+    $E8:  result:='gps_input';
+    $E9:  result:='gps_rtcm_data';
+    $EA:  result:='high_latency';
+    $EB:  result:='high_latency2';
+    241:  result:='vibration';                     {Länge 14}
+    $F2:  result:='home_position';                 {Supported Msg Länge 28 oder 3C}
+    $F3:  result:='set_home_position';
+    $F4:  result:='message_interval';
+    $F5:  result:='extended_sys_state';            {Länge 02}
+    $F6:  result:='adsb_vehicle';
+    $F7:  result:='collision';
+    $F8:  result:='v2_extension';
+    $F9:  result:='memory_vect';
+    $FA:  result:='debug_vect';
+    $FB:  result:='named_value_float';
+    $FC:  result:='named_value_int';
+    $FD:  result:='statustext';                    {Länge variabel}
+    $FE:  result:='debug';
+    256:  result:='setup_signing';
+    $101: result:='button_change';
+    $102: result:='play_tune';
+    $103: result:='camera_information';
+    $104: result:='camera_settings';
+    $105: result:='storage_information';
+    $106: result:='camera_capture_status';
+    $107: result:='camera_image_captured';         {Länge FC}
+    $108: result:='flight_information';            {Supported Msg Länge 1B}
+    $109: result:='mount_orientation';             {Länge 20}
+    $10A: result:='logging_data';
+    $10B: result:='logging_data_acked';
+    $10C: result:='logging_ack';
+    $10D: result:='video_stream_information';
+    $10E: result:='video_stream_status';           {270 len 19}
+    $10F: result:='camera_fov_status';             {271 len 52}
+
+    275:  result:='camera_tracking_image_status';  {275 len 31}
+    276:  result:='camera_tracking_geo_status';    {276 len 49}
+
+    280:  result:='gimbal_manager_information';
+    281:  result:='gimbal_manager_status';
+    282:  result:='gimbal_manager_set_attitude';
+    283:  result:='gimbal_device_information';
+    284:  result:='gimbal_device_set_attitude';
+    285:  result:='gimbal_device_attitude_status';
+    286:  result:='autopilot_state_for_gimbal_device';
+    287:  result:='gimbal_manager_set_pitchyaw';
+    288:  result:='gimbal_manager_set_manual_control';
+    290:  result:='esc_info';
+    291:  result:='esc_status';
+
+    299:  result:='wifi_config_ap';
+    300:  result:='protocol_version';              {12C'h not supported anymore}
+
+    301:  result:='ais_vessel';
+
+    310:  result:='uavcan_node_status';
+    $137: result:='uavcan_node_info';
+    $140: result:='param_ext_request_read';
+    $141: result:='param_ext_request_list';
+    $142: result:='param_ext_value';               {Länge 95}
+    $143: result:='param_ext_set';
+    $144: result:='param_ext_ack';                 {Länge 91}
+    $14A: result:='obstacle_distance';             {Länge 9E}
+    $14B: result:='odometry';
+    $14C: result:='trajectory_representation_waypoints';
+    $14D: result:='trajectory_representation_bezier';
+
+    336:  result:='cellular_config';
+
+    339:  result:='raw_rpm';
+    340:  result:='UTM_global_position';           {154'h}
+    350:  result:='debug_float_array';
+    360:  result:='orbit_execution_status';
+
+    370:  result:='smart_battery_info';
+    373:  result:='generator_status';
+    375:  result:='actuator_output_status';
+    380:  result:='time_estimate_to_target';
+    385:  result:='tunnel';
+    390:  result:='onboard_computer_status';
+    395:  result:='component_information';
+    400:  result:='play_tune v2';
+    401:  result:='supported_tunes';
+
+    9000: result:='wheel_distance';                {2328'h}
+    9005: result:='winch_status';
+
+   12900: result:='open_drone_id_basic_id';        {3264'h}
+   12901: result:='open_drone_id_location';
+   12902: result:='open_drone_id_authentication';
+   12903: result:='open_drone_id_self_id';
+   12904: result:='open_drone_id_system';
+   12905: result:='open_drone_id_operator_id';
+   12915: result:='open_drone_id_message_pack';
+   12918: result:='open_drone_id_arm_status';
+   12919: result:='open_drone_id_system_update';
+   19920: result:='hygrometer_sensor';
+  end;
+end;
+
 
 end.
 

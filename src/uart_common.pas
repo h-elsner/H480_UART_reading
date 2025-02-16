@@ -156,7 +156,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.5 2025-01-10';
+  AppVersion='V1.6 2025-02-14';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
@@ -182,11 +182,14 @@ type TByteInfo = record
        len: integer;
        MsgID: byte;
        SysID: byte;
-       TargetID: byte;
+       TargetID: byte;   {= Componente ID}
        ActionType: byte;
        pos: integer;
        fix: boolean;
      end;
+
+{Compnent ID's:
+https://mavlink.io/en/messages/common.html#MAV_COMPONENT}
 
 {Public functions and procedures}
 function HexStrValueToInt(v: string): byte;
