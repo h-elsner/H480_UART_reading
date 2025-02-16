@@ -35,6 +35,7 @@ type
     sysid: byte;
     targetid: byte;
     msgid: byte;
+    msgid32: uint32;
     valid: boolean;
   end;
 

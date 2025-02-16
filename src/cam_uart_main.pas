@@ -290,7 +290,6 @@ type
     procedure rgOutputFormatClick(Sender: TObject);
     procedure rgSysIDClick(Sender: TObject);
     procedure rgTargetIDClick(Sender: TObject);
-    procedure FilterBCmessagesFromUSBrecording(fn: string);
 
   private
     function  CheckRawFileFormat(fn: string): byte;
@@ -318,6 +317,8 @@ type
     procedure DoChart(chart: byte);        {1 left, 2 right}
     procedure DecodeUART;
     procedure DecodeBCmsg(const msg: TMAVmessage; RowNumber: integer);
+    procedure FilterFDmessagesFromUSBrecording(fn: string);
+    procedure FilterBCmessagesFromUSBrecording(fn: string);
   public
 
   end;
@@ -2584,6 +2585,110 @@ begin
   end;
 end;
 
+procedure TForm1.FilterFDmessagesFromUSBrecording(fn: string);
+var
+  infn, SensorBytes: TMemorystream;
+  MsgTypelist: TStringList;
+  msg: TMAVmessage;
+  b: byte;
+  i: integer;
+  boottime, tme: uint32;
+
+begin
+  infn:=TMemoryStream.Create;
+  SensorBytes:=TMemoryStream.Create;
+  MsgTypelist:=TStringList.Create;
+  MsgTypelist.Sorted:=true;
+  MsgTypelist.Duplicates:=dupIgnore;
+  Screen.Cursor:=crHourGlass;
+  lbSensorType.Items.Clear;
+  FillRawGridHeader(264);
+  FillDataBCheader(264);
+  Application.ProcessMessages;
+  gridRaw.BeginUpdate;
+  gridData.BeginUpdate;
+  boottime:=0;
+  try
+    infn.LoadFromFile(fn);
+    if infn.Size>100 then begin
+
+      Memo1.Lines.Clear;
+      Memo1.Lines.Add(fn);
+      Memo1.Lines.Add('');
+
+      infn.Position:=8;
+      while infn.Position<(infn.Size-LengthFixPartFD-2) do begin
+        repeat                                     {RecordID suchen $BC}
+          b:=infn.ReadByte;
+        until (b=MagicFD) or (infn.Position>=infn.Size-LengthFixPartFD);
+        msg.msglength:=infn.ReadByte;              {Länge Payload mit CRC}
+        b:=infn.ReadByte;
+        if b=0 then begin                          {Compatibility flags low}
+          b:=infn.ReadByte;
+          if b=0 then begin                        {Compatibility flags high}
+            infn.Position:=infn.Position-4;
+            infn.ReadBuffer(msg.msgbytes, msg.msglength+LengthFixPartFD+2);  {Länge Datensatz mit FixPart und CRC}
+            msg.sysid:=msg.msgbytes[5];
+            msg.targetid:=msg.msgbytes[6];
+            msg.msgid32:=MavGetUint32(msg, 7) and $FFFFFF;
+  //          msg.valid:=CheckCRC16X25(msg, LengthFixPartBC);
+            MsgTypelist.Add(Format('%.3d', [msg.msgid32]));
+
+  //          tme:=ReadBCmessage(msg);
+            if tme>0 then
+              boottime:=tme;
+            b:=LengthFixPartFD+1;                    {With CRC}
+            if cbSensorFile.Checked then
+              for i:=0 to msg.msglength+b do
+                SensorBytes.WriteByte(msg.msgbytes[i]);
+
+  // Raw table
+            if not cbRawWithCRC.Checked then
+              b:=LengthFixPartBC-1;
+            gridRaw.RowCount:=gridRaw.RowCount+1;
+            gridData.RowCount:=gridData.RowCount+1;
+            gridRaw.Cells[0, gridRaw.RowCount-1]:=FormatFloat('0.000', boottime/1000);
+            gridData.Cells[0, gridData.RowCount-1]:=gridRaw.Cells[0, gridRaw.RowCount-1];
+            for i:=0 to msg.msglength+b do
+              gridRaw.Cells[i+1, gridRaw.RowCount-1]:=IntToHex(msg.msgbytes[i], 2);
+(*
+  // Data table
+            gridData.Cells[1, gridData.RowCount-1]:=IntToHex(msg.msgbytes[0], 2);
+            for i:=1 to 4 do
+              gridData.Cells[i+1, gridData.RowCount-1]:=IntToStr(msg.msgbytes[i]);
+            gridData.Cells[6, gridData.RowCount-1]:=SensorTypeToStr(msg.msgid);
+            DecodeBCmsg(msg, gridData.RowCount-1);    *)
+          end;
+        end;
+      end;
+    end;
+    FillMsgList(MsgTypelist, lbSensorType, 2);
+
+    Memo1.Lines.Add('');
+    Memo1.Lines.Add(trenner);
+    Memo1.Lines.Add('');
+    for i:=0 to lbSensorType.Items.Count-1 do
+      Memo1.Lines.Add(lbSensorType.Items[i]);
+
+
+    if cbSensorFile.Checked and (SensorBytes.Size>LengthFixPartBC) then begin
+      SaveDialog.Title:=titSensorFile;
+      SaveDialog.FileName:=ExtractFilePath(OpenDialog.Files[0])+
+                           'Sensor'+PathDelim+'Sensor_00001.bin';
+      if SaveDialog.Execute then
+        SensorBytes.SaveToFile(SaveDialog.FileName);
+    end;
+  finally
+    gridRaw.EndUpdate;
+    gridData.EndUpdate;
+    infn.Free;
+    SensorBytes.Free;
+    MsgTypelist.Free;
+    Screen.Cursor:=crDefault;
+  end;
+end;
+
+
 procedure TForm1.DecodeUART;
 var
   inlist, addlist_raw, addlist_data: TStringList;
@@ -2719,7 +2824,8 @@ begin
     StatusBar1.Panels[4].Text:=OpenDialog.Files[0];
     if CheckRawFileFormat(OpenDialog.FileName)=6 then begin
       btnReLoad.Enabled:=false;
-      FilterBCmessagesFromUSBrecording(OpenDialog.FileName);
+//      FilterBCmessagesFromUSBrecording(OpenDialog.FileName);
+      FilterFDmessagesFromUSBrecording(OpenDialog.FileName);
       exit;
     end;
     for i:=0 to OpenDialog.Files.Count-1 do begin
