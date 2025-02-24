@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 714
+  Left = 841
   Height = 680
-  Top = 213
+  Top = 375
   Width = 870
   AllowDropFiles = True
   ClientHeight = 680
@@ -9,12 +9,12 @@ object Form1: TForm1
   Constraints.MinHeight = 680
   Constraints.MinWidth = 870
   Menu = mnMain
-  SessionProperties = 'cbAutoSave.Checked;cbCoordForDocu.Checked;cbOrOther.Checked;cbRawWithCRC.Checked;cbSensorFile.Checked;edLength.Text;edOther.Text;Memo1.Font;OpenDialog.FileName;PageControl1.ActivePage;rgDataType.ItemIndex;rgMsgID.ItemIndex;rgMsgType.ItemIndex;rgOutputFormat.ItemIndex;rgSysID.ItemIndex;rgTargetID.ItemIndex;WindowState;Left;Top;Width;Height'
-  ShowHint = True
-  LCLVersion = '4.0.0.2'
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDropFiles = FormDropFiles
+  SessionProperties = 'cbAutoSave.Checked;cbCoordForDocu.Checked;cbOrOther.Checked;cbRawWithCRC.Checked;cbSensorFile.Checked;edLength.Text;edOther.Text;Height;Left;Memo1.Font;OpenDialog.FileName;PageControl1.ActivePage;rgDataType.ItemIndex;rgMsgID.ItemIndex;rgMsgType.ItemIndex;rgOutputFormat.ItemIndex;rgSysID.ItemIndex;rgTargetID.ItemIndex;Top;Width;WindowState;cbCheckCRC.Checked'
+  ShowHint = True
+  LCLVersion = '3.7.0.0'
   object panButtons: TPanel
     Left = 0
     Height = 72
@@ -60,8 +60,8 @@ object Form1: TForm1
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 657
+    Height = 18
+    Top = 662
     Width = 870
     Panels = <    
       item
@@ -84,9 +84,9 @@ object Form1: TForm1
       end>
     SimplePanel = False
   end
-  object PageControl1: TPageControl
+  object pcMain: TPageControl
     Left = 0
-    Height = 585
+    Height = 590
     Top = 72
     Width = 870
     ActivePage = tsSettings
@@ -95,13 +95,13 @@ object Form1: TForm1
     TabOrder = 2
     object tsRaw: TTabSheet
       Caption = 'Raw'
-      ClientHeight = 557
-      ClientWidth = 862
+      ClientHeight = 560
+      ClientWidth = 860
       object gridRaw: TStringGrid
         Left = 0
-        Height = 557
+        Height = 560
         Top = 0
-        Width = 862
+        Width = 860
         Align = alClient
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll, goCellHints]
         PopupMenu = mnRaw
@@ -112,13 +112,13 @@ object Form1: TForm1
     end
     object tsData: TTabSheet
       Caption = 'Data'
-      ClientHeight = 557
-      ClientWidth = 862
+      ClientHeight = 560
+      ClientWidth = 860
       object gridData: TStringGrid
         Left = 0
-        Height = 557
+        Height = 560
         Top = 0
-        Width = 862
+        Width = 860
         Align = alClient
         FixedCols = 0
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll, goSelectionActive, goCellHints]
@@ -130,8 +130,8 @@ object Form1: TForm1
     end
     object tsSettings: TTabSheet
       Caption = 'Settings / Filter'
-      ClientHeight = 557
-      ClientWidth = 862
+      ClientHeight = 560
+      ClientWidth = 860
       object rgOutputFormat: TRadioGroup
         Left = 8
         Height = 121
@@ -146,16 +146,16 @@ object Form1: TForm1
         ChildSizing.ShrinkVertical = crsScaleChilds
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 1
-        ClientHeight = 101
-        ClientWidth = 125
+        ClientHeight = 104
+        ClientWidth = 127
         ItemIndex = 1
         Items.Strings = (
           'Decimal'
           'Hex'
           'Char'
         )
-        TabOrder = 0
         OnClick = rgOutputFormatClick
+        TabOrder = 0
       end
       object gbFilter: TGroupBox
         Left = 144
@@ -163,8 +163,8 @@ object Form1: TForm1
         Top = 16
         Width = 464
         Caption = 'Filter YMAVlink'
-        ClientHeight = 300
-        ClientWidth = 460
+        ClientHeight = 303
+        ClientWidth = 462
         TabOrder = 1
         object rgMsgID: TRadioGroup
           Left = 16
@@ -180,8 +180,8 @@ object Form1: TForm1
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 255
-          ClientWidth = 77
+          ClientHeight = 258
+          ClientWidth = 79
           ItemIndex = 0
           Items.Strings = (
             'All'
@@ -212,8 +212,8 @@ object Form1: TForm1
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 188
-          ClientWidth = 76
+          ClientHeight = 191
+          ClientWidth = 78
           ItemIndex = 0
           Items.Strings = (
             'All'
@@ -223,8 +223,8 @@ object Form1: TForm1
             '4'
             '6'
           )
-          TabOrder = 1
           OnClick = rgSysIDClick
+          TabOrder = 1
         end
         object rgTargetID: TRadioGroup
           Left = 208
@@ -240,8 +240,8 @@ object Form1: TForm1
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 188
-          ClientWidth = 84
+          ClientHeight = 191
+          ClientWidth = 86
           ItemIndex = 0
           Items.Strings = (
             'All'
@@ -253,19 +253,19 @@ object Form1: TForm1
             '100'
             '154'
           )
-          TabOrder = 2
           OnClick = rgTargetIDClick
+          TabOrder = 2
         end
         object lblLenght: TLabel
           Left = 344
-          Height = 15
+          Height = 16
           Top = 16
-          Width = 83
+          Width = 95
           Caption = 'Message length'
         end
         object edLength: TEdit
           Left = 344
-          Height = 23
+          Height = 28
           Top = 40
           Width = 104
           TabOrder = 3
@@ -282,16 +282,16 @@ object Form1: TForm1
         end
         object lblSysID: TLabel
           Left = 120
-          Height = 15
+          Height = 16
           Top = 253
-          Width = 36
+          Width = 42
           Caption = 'Sender'
         end
         object lblTarget: TLabel
           Left = 216
-          Height = 15
+          Height = 16
           Top = 253
-          Width = 32
+          Width = 39
           Caption = 'Target'
         end
         object gbOtherMsgID: TGroupBox
@@ -300,22 +300,22 @@ object Form1: TForm1
           Top = 88
           Width = 144
           Caption = 'Other MsgID'
-          ClientHeight = 116
-          ClientWidth = 140
+          ClientHeight = 119
+          ClientWidth = 142
           TabOrder = 5
           object cbOrOther: TCheckBox
             Left = 3
-            Height = 19
+            Height = 23
             Hint = 'Zwei Message IDs selektieren'
             Top = 16
-            Width = 112
+            Width = 133
             Caption = 'Or another MsgID'
             ParentBidiMode = False
             TabOrder = 0
           end
           object edOther: TEdit
             Left = 48
-            Height = 23
+            Height = 28
             Top = 64
             Width = 88
             TabOrder = 1
@@ -333,10 +333,10 @@ object Form1: TForm1
         end
         object cbSensorFile: TCheckBox
           Left = 304
-          Height = 19
+          Height = 23
           Hint = 'Create a fake Sensor file from Message 255'
           Top = 253
-          Width = 109
+          Width = 130
           Caption = 'Create Sensor file'
           TabOrder = 6
         end
@@ -347,8 +347,8 @@ object Form1: TForm1
         Top = 16
         Width = 169
         Caption = 'Filter SR24'
-        ClientHeight = 204
-        ClientWidth = 165
+        ClientHeight = 207
+        ClientWidth = 167
         TabOrder = 2
         object rgMsgType: TRadioGroup
           Left = 8
@@ -364,8 +364,8 @@ object Form1: TForm1
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 156
-          ClientWidth = 140
+          ClientHeight = 159
+          ClientWidth = 142
           ItemIndex = 0
           Items.Strings = (
             'All'
@@ -388,9 +388,9 @@ object Form1: TForm1
       end
       object cbAutoSave: TCheckBox
         Left = 8
-        Height = 19
+        Height = 23
         Top = 160
-        Width = 99
+        Width = 119
         Caption = 'Autosave result'
         Checked = True
         State = cbChecked
@@ -398,9 +398,9 @@ object Form1: TForm1
       end
       object cbCoordForDocu: TCheckBox
         Left = 8
-        Height = 19
+        Height = 23
         Top = 200
-        Width = 65
+        Width = 79
         Caption = 'For docu'
         TabOrder = 5
       end
@@ -415,22 +415,72 @@ object Form1: TForm1
       end
       object cbRawWithCRC: TCheckBox
         Left = 8
-        Height = 19
+        Height = 23
         Top = 243
-        Width = 92
+        Width = 107
         Caption = 'Raw with CRC'
         TabOrder = 7
+      end
+      object gbExtraTool: TGroupBox
+        Left = 616
+        Height = 136
+        Hint = 'Find CRC_EXTRA for given MsgID from Magic_FD messages'
+        Top = 264
+        Width = 169
+        Caption = 'CRC_Extra tool'
+        ClientHeight = 119
+        ClientWidth = 167
+        TabOrder = 8
+        OnDblClick = gbExtraToolDblClick
+        object lblID: TLabel
+          Left = 8
+          Height = 16
+          Top = 8
+          Width = 68
+          Caption = 'Message ID'
+        end
+        object edID: TEdit
+          Left = 8
+          Height = 28
+          Top = 32
+          Width = 144
+          TabOrder = 0
+          TextHint = 'MsgID number'
+        end
+        object lblCRCextra: TLabel
+          Left = 8
+          Height = 16
+          Top = 88
+          Width = 72
+          Caption = 'CRC_EXTRA'
+        end
+        object edCRCextra: TEdit
+          Left = 88
+          Height = 28
+          Top = 80
+          Width = 64
+          TabOrder = 1
+          TextHint = 'CRC_EXTRA'
+        end
+      end
+      object cbCheckCRC: TCheckBox
+        Left = 8
+        Height = 23
+        Top = 280
+        Width = 100
+        Caption = 'cbCheckCRC'
+        TabOrder = 9
       end
     end
     object tsStatistics: TTabSheet
       Caption = 'Statistics'
-      ClientHeight = 557
-      ClientWidth = 862
+      ClientHeight = 560
+      ClientWidth = 860
       object lblMsgID: TLabel
         Left = 8
-        Height = 15
+        Height = 16
         Top = 24
-        Width = 65
+        Width = 74
         Caption = 'Message IDs'
       end
       object lbMsgID: TListBox
@@ -440,6 +490,7 @@ object Form1: TForm1
         Width = 184
         ItemHeight = 0
         TabOrder = 0
+        TopIndex = -1
       end
       object lbNumMsgID: TListBox
         Left = 208
@@ -448,10 +499,11 @@ object Form1: TForm1
         Width = 47
         ItemHeight = 0
         TabOrder = 1
+        TopIndex = -1
       end
       object edSumMsgID: TEdit
         Left = 192
-        Height = 23
+        Height = 28
         Top = 488
         Width = 63
         ReadOnly = True
@@ -460,9 +512,9 @@ object Form1: TForm1
       end
       object lblSensorType: TLabel
         Left = 296
-        Height = 15
+        Height = 16
         Top = 16
-        Width = 66
+        Width = 76
         Caption = 'Sensor types'
         ParentColor = False
       end
@@ -473,12 +525,13 @@ object Form1: TForm1
         Width = 240
         ItemHeight = 0
         TabOrder = 3
+        TopIndex = -1
       end
       object lblMsgType: TLabel
         Left = 576
-        Height = 15
+        Height = 16
         Top = 16
-        Width = 78
+        Width = 90
         Caption = 'Message Types'
       end
       object lbMsgType: TListBox
@@ -488,6 +541,7 @@ object Form1: TForm1
         Width = 168
         ItemHeight = 0
         TabOrder = 4
+        TopIndex = -1
       end
       object lbNumMsgType: TListBox
         Left = 744
@@ -496,10 +550,11 @@ object Form1: TForm1
         Width = 48
         ItemHeight = 0
         TabOrder = 5
+        TopIndex = -1
       end
       object edSumMsgType: TEdit
         Left = 728
-        Height = 23
+        Height = 28
         Top = 488
         Width = 64
         ReadOnly = True
@@ -508,9 +563,9 @@ object Form1: TForm1
       end
       object lblActionType: TLabel
         Left = 568
-        Height = 15
+        Height = 16
         Top = 296
-        Width = 66
+        Width = 74
         Caption = 'Action types'
       end
       object lbActionType: TListBox
@@ -520,10 +575,11 @@ object Form1: TForm1
         Width = 232
         ItemHeight = 0
         TabOrder = 7
+        TopIndex = -1
       end
       object edErrorCounterMAV: TEdit
         Left = 8
-        Height = 23
+        Height = 28
         Top = 488
         Width = 152
         ReadOnly = True
@@ -532,7 +588,7 @@ object Form1: TForm1
       end
       object edErrorCounterSR24: TEdit
         Left = 560
-        Height = 23
+        Height = 28
         Top = 488
         Width = 136
         ReadOnly = True
@@ -542,15 +598,15 @@ object Form1: TForm1
     end
     object tsChart: TTabSheet
       Caption = 'Chart'
-      ClientHeight = 557
-      ClientWidth = 862
+      ClientHeight = 560
+      ClientWidth = 860
       object panLeft: TPanel
         Left = 0
-        Height = 557
+        Height = 560
         Top = 0
         Width = 144
         Align = alLeft
-        ClientHeight = 557
+        ClientHeight = 560
         ClientWidth = 144
         TabOrder = 0
         object rgDataType: TRadioGroup
@@ -568,8 +624,8 @@ object Form1: TForm1
           ChildSizing.ShrinkVertical = crsScaleChilds
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 1
-          ClientHeight = 188
-          ClientWidth = 118
+          ClientHeight = 191
+          ClientWidth = 120
           ItemIndex = 1
           Items.Strings = (
             'Byte'
@@ -579,8 +635,8 @@ object Form1: TForm1
             'UInt32'
             'Float'
           )
-          TabOrder = 0
           OnClick = rgDataTypeClick
+          TabOrder = 0
         end
         object btnBack: TBitBtn
           Left = 8
@@ -625,8 +681,8 @@ object Form1: TForm1
             FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
             FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
           }
-          TabOrder = 1
           OnClick = btnBackClick
+          TabOrder = 1
         end
         object btnClearRed: TButton
           Left = 8
@@ -641,9 +697,9 @@ object Form1: TForm1
       end
       object Chart1: TChart
         Left = 144
-        Height = 557
+        Height = 560
         Top = 0
-        Width = 718
+        Width = 716
         AxisList = <        
           item
             Marks.LabelFont.Color = clBlue
@@ -701,51 +757,51 @@ object Form1: TForm1
     end
     object tsText: TTabSheet
       Caption = 'Text'
-      ClientHeight = 557
-      ClientWidth = 862
+      ClientHeight = 560
+      ClientWidth = 860
       object plLeft: TPanel
         Left = 0
-        Height = 557
+        Height = 560
         Top = 0
         Width = 394
         Align = alLeft
-        ClientHeight = 557
+        ClientHeight = 560
         ClientWidth = 394
         TabOrder = 0
         object lblDateTime: TLabel
           Left = 16
-          Height = 15
+          Height = 16
           Top = 24
-          Width = 58
+          Width = 66
           Caption = 'Date/Time:'
         end
         object lblDateTimeOut: TLabel
           Left = 120
-          Height = 15
+          Height = 16
           Top = 24
-          Width = 25
+          Width = 28
           Caption = 'GMT'
         end
         object lblSerialNo: TLabel
           Left = 16
-          Height = 15
+          Height = 16
           Top = 64
-          Width = 76
+          Width = 86
           Caption = 'Serial number:'
         end
         object lblSerialNoOut: TLabel
           Left = 120
-          Height = 15
+          Height = 16
           Top = 64
-          Width = 84
+          Width = 95
           Caption = 'Flight controller'
         end
       end
       object Memo1: TMemo
         Left = 394
-        Height = 557
+        Height = 560
         Top = 0
-        Width = 468
+        Width = 466
         Align = alClient
         Font.Height = -16
         Font.Name = 'Courier New'

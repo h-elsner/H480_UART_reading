@@ -54,9 +54,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
-  StdCtrls, Menus, ActnList, Grids, XMLPropStorage, Buttons, TAGraph, math,
-  TAIntervalSources, TASeries, TATransformations, dateutils, mav1defs, SR24_dec,
-  uart_common, Types;
+  StdCtrls, Menus, ActnList, Grids, XMLPropStorage, Buttons, Spin, TAGraph,
+  math, TAIntervalSources, TASeries, TATransformations, dateutils, mav1defs,
+  SR24_dec, uart_common, Types;
 
 Const
   sep=',';
@@ -174,8 +174,11 @@ type
     AutoScaleRight: TAutoScaleAxisTransform;
     cbRawWithCRC: TCheckBox;
     cbSensorFile: TCheckBox;
+    cbCheckCRC: TCheckBox;
     edErrorCounterMAV: TEdit;
     edErrorCounterSR24: TEdit;
+    edID: TEdit;
+    edCRCextra: TEdit;
     edLength: TEdit;
     edOther: TEdit;
     edSumMsgID: TEdit;
@@ -183,6 +186,9 @@ type
     gbFilter: TGroupBox;
     gbOtherMsgID: TGroupBox;
     gbSR24Filter: TGroupBox;
+    gbExtraTool: TGroupBox;
+    lblCRCextra: TLabel;
+    lblID: TLabel;
     lblSerialNoOut: TLabel;
     lblSerialNo: TLabel;
     lblDateTimeOut: TLabel;
@@ -226,7 +232,7 @@ type
     mnGoFilter: TMenuItem;
     mnMain: TMainMenu;
     mnRawSave: TMenuItem;
-    PageControl1: TPageControl;
+    pcMain: TPageControl;
     panLeft: TPanel;
     mnRaw: TPopupMenu;
     rgDataType: TRadioGroup;
@@ -272,6 +278,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
+    procedure gbExtraToolDblClick(Sender: TObject);
     procedure gridDataGetCellHint(Sender: TObject; ACol, ARow: Integer;
       var HintText: String);
     procedure gridDataPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
@@ -325,6 +332,7 @@ type
 
 var
   Form1: TForm1;
+  CRCextra: byte;
 
 implementation
 
@@ -541,7 +549,8 @@ begin
   end;
 end;
 
-function RawmessageToMergelist(msg: TPayLoad; timept: string; WithCRC: boolean=false): string; overload;
+function RawMessageToMergelist(Const msg: TPayLoad; timept: string;
+                               LengthFixPart: byte; WithCRC: boolean=false): string; overload;
 var
   i, num: integer;
 
@@ -554,27 +563,27 @@ begin
     result:=result+dtsep+IntToHex(msg[i], 2);
 end;
 
-function RawMessageToMergelist(msg: TMAVmessage; timept: string; WithCRC: boolean=false): string; overload;
+function RawMessageToMergelist(Const msg: TMAVmessage; timept: string;
+                               LengthFixPart: byte; WithCRC: boolean=false): string; overload;
 var
   i, num: integer;
 
 begin
   result:=timept;
-  num:=msg.msgbytes[1]+7;
+  num:=msg.msgbytes[1]+LengthFixPart-1;
   if WithCRC then
     num:=num+2;
   for i:=0 to num do
     result:=result+dtsep+IntToHex(msg.msgbytes[i], 2);
   if WithCRC then
-    result:=result+dtsep+IntToHex(CRC16MAV(msg, LengthFixPartFE), 4);
+    result:=result+dtsep+IntToHex(CRC16MAV(msg, LengthFixPart, 1, CRCextra), 4);
 end;
 
 {for gridData/data CSV the fix part:
   0 Time
   1 Sequ_No
   2 Msg_ID
-  3 ActionType
-  4 Sys_ID
+  3 ActionType                                                           4 Sys_ID
   5 Target_ID
   6 RSSI
   from 7 on payload}
@@ -1820,7 +1829,7 @@ begin
     StatusBar1.Panels[0].Text:=IntToStr(instream.Size);
     StatusBar1.Panels[4].Text:=fn;
     HexViewABinaryStream(instream, gridRaw);
-    PageControl1.ActivePage:=tsRaw;
+    pcMain.ActivePage:=tsRaw;
   finally
     instream.Free;
   end;
@@ -1854,7 +1863,7 @@ begin
     if cbAutoSave.Checked then
       outputstream.SaveToFile(SaveDialog.FileName);
     gridRaw.AutoSizeColumns;
-    PageControl1.ActivePage:=tsRaw;
+    pcMain.ActivePage:=tsRaw;
     gridRaw.Col:=0;
     gridRaw.Row:=1;
     gridRaw.SetFocus;
@@ -2106,6 +2115,8 @@ begin
   randomize;
   gridRaw.AlternateColor:=clGridHighlightRows;
   Memo1.Text:='';
+  CRCextra:=0;
+  edCRCextra.Text:='';
 end;
 
 procedure TForm1.FormDropFiles(Sender: TObject; const FileNames: array of string);
@@ -2119,6 +2130,13 @@ begin
   OpenDialog.FileName:=FileNames[0];
   Application.BringToFront;
   DecodeUART;
+end;
+
+procedure TForm1.gbExtraToolDblClick(Sender: TObject);
+begin
+  edID.Text:='';
+  edCRCextra.Text:='';
+  edID.SetFocus;
 end;
 
 procedure TForm1.gridDataGetCellHint(Sender: TObject; ACol, ARow: Integer;
@@ -2243,7 +2261,7 @@ begin
         end;
       end;
       StatusBar1.Panels[1].Text:=inttoStr(serLeft.Count);
-      PageControl1.ActivePage:=tsChart;
+      pcMain.ActivePage:=tsChart;
     end;
   end;
 end;
@@ -2271,7 +2289,7 @@ end;
 
 procedure TForm1.btnBackClick(Sender: TObject);
 begin
-  PageControl1.ActivePage:=tsData;
+  pcMain.ActivePage:=tsData;
 end;
 
 procedure TForm1.btnClearRedClick(Sender: TObject);
@@ -2306,7 +2324,7 @@ end;
 
 procedure TForm1.acGoFilterExecute(Sender: TObject);
 begin
-  PageControl1.ActivePage:=tsSettings;
+  pcMain.ActivePage:=tsSettings;
 end;
 
 procedure TForm1.acResetAllExecute(Sender: TObject);
@@ -2684,7 +2702,7 @@ begin
 
       infn.Position:=8;
       while infn.Position<(infn.Size-LengthFixPartFD-2) do begin
-        repeat                                     {RecordID suchen $BC}
+        repeat                                     {RecordID suchen $FD}
           b:=infn.ReadByte;
         until (b=MagicFD) or (infn.Position>=infn.Size-LengthFixPartFD);
         msg.msglength:=infn.ReadByte;              {Länge Payload mit CRC}
@@ -2697,7 +2715,7 @@ begin
             msg.sysid:=msg.msgbytes[5];
             msg.targetid:=msg.msgbytes[6];
             msg.msgid32:=MavGetUint32(msg, 7) and $FFFFFF;
-  //          msg.valid:=CheckCRC16X25(msg, LengthFixPartBC);
+  //          msg.valid:=CheckCRC16MAV(msg, LengthFixPartFD);
             MsgTypelist.Add(Format('%.3d', [msg.msgid32]));
 
   //          tme:=ReadBCmessage(msg);
@@ -2710,7 +2728,7 @@ begin
 
   // Raw table
             if not cbRawWithCRC.Checked then
-              b:=LengthFixPartBC-1;
+              b:=LengthFixPartFD-1;
             gridRaw.RowCount:=gridRaw.RowCount+1;
             gridData.RowCount:=gridData.RowCount+1;
             gridRaw.Cells[0, gridRaw.RowCount-1]:=FormatFloat('0.000', boottime/1000);
@@ -2794,8 +2812,10 @@ var
             if cbSensorFile.Checked then
               CreateSensorFile(MAVmsg);
           end;
+
           if DoFilterYMAV(Mavmsg) then begin
-            addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, cbRawWithCRC.Checked));
+            CRCextra:=CRC_EXTRA_FE;
+            addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, LengthFixPartFE, cbRawWithCRC.Checked));
             addlist_data.Add(YMAVdataToMergelist_FE(MAVmsg, tp));
           end;
 
@@ -2816,7 +2836,7 @@ var
     lineindex: integer;
     MAVmsg: TMAVmessage;
     tp: string;
-    i: integer;
+    i, id: integer;
 
   begin
     btnReLoad.Enabled:=true;;
@@ -2827,11 +2847,35 @@ var
       tp:=SetLengthTime(inlist[lineindex].Split([sep])[0]);
       if inlist[lineindex].Split([sep])[1]=MagicFD_AsText then begin
         MAVmsg:=NewYMavMessageFD(inlist, lineindex);
+        CRCextra:=GetCRCextra(MAVmsg.msgid32);
+        if cbCheckCRC.Checked then begin
+          MAVmsg.valid:=false;
+          If CRC16MAV(MAVmsg, LengthFixPartFD, 1, CRCextra)=
+                     MAVgetuint16(MAVmsg, MAVmsg.msglength+LengthFixPartFD) then
+            MAVmsg.valid:=true;
+        end;
+
         if MAVmsg.valid then begin
           msgIDlist.Add(Format('%.3d', [MAVmsg.msgid32]));
 
+// Find the CRC_EXTRA for Message
+          if (edCRCextra.Text='') and (edID.Text<>'') then begin
+            id:=StrToIntDef(edID.Text, 999999);
+            if id<999999 then begin
+              if MAVmsg.msgid32=id then begin
+                for i:=0 to 255 do begin
+                  If CRC16MAV(MAVmsg, LengthFixPartFD, 1, i)=
+                     MAVgetuint16(MAVmsg, MAVmsg.msglength+LengthFixPartFD) then begin
+                    edCRCextra.Text:=IntToStr(i);
+                    break;
+                  end;
+                end;
+              end;
+            end;
+          end;
+
           if DoFilterYMAV(Mavmsg) then begin
-            addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, cbRawWithCRC.Checked));
+            addlist_raw.Add(RawMessageToMergelist(MAVmsg, tp, LengthFixPartFD, cbRawWithCRC.Checked));
             addlist_data.Add(YMAVdataToMergelist_FD(MAVmsg, tp));
           end;
 
@@ -2870,7 +2914,7 @@ var
           actiontypelist.Add(Format('%.3d', [SR24data[4]]));
 
         if DoFilterSR24(SR24data) then begin
-          addlist_raw.Add(RawMessageToMergelist(SR24data, tp, cbRawWithCRC.Checked));
+          addlist_raw.Add(RawMessageToMergelist(SR24data, tp, LengthFixPartBC, cbRawWithCRC.Checked));
           addlist_data.Add(SR24dataToMergelist(SR24data, tp));
         end;
         if (lineindex<inlist.Count) and
@@ -3017,10 +3061,8 @@ begin
     end;
 
     gridData.AutoSizeColumns;
-    PageControl1.ActivePage:=tsData;
     gridData.Row:=1;
     griddata.Col:=2;
-    griddata.SetFocus;
   finally
     gridRaw.EndUpdate;
     gridData.EndUpdate;

@@ -24,15 +24,26 @@ const
   MagicFE_AsText='0xFE';
   MagicFD_AsText='0xFD';
 
+  CRC_EXTRA_FE=0;
+  CRC_EXTRA_cmd=224;
+  CRC_EXTRA_heartbeat=50;
+
   rsUnknown_='Unknown_';
   rsUndef_='Undef_';
+
+type
+  TCRC_EXTRA_array=array [0..1] of array of UINT32;
+
+const                         {MAVLINK_MSG_ID_xxx_CRC}
+  CRCextra: TCRC_EXTRA_array=(( 0,  1,  2,  4, 20, 21, 22, 23,24,25, 26, 27,28, 29,30, 31, 32, 33, 34, 35, 36,46,50, 62, 65, 70,74, 76, 77, 85, 87,105,111,124,139,140,141,147,148,230,241,245,253,264,265,283,284,285,5002),
+                              (50,124,137,237,214,159,220,168,24,23,170,144,67,115,39,246,185,104,237,244,222,11,78,183,118,124,20,152,143,140,150, 93, 34, 87,168,181, 47,154,178,163, 90,130, 83, 49, 26, 74, 99,137,CRC_EXTRA_cmd));
 
 
 type
   TMAVmessage = record
     time: TDateTime;
     msglength: integer;
-    msgbytes: array[0..NumPayLoadBytes+LengthFixPartFE+2] of byte;
+    msgbytes: array[0..NumPayLoadBytes+LengthFixPartFD+2] of byte;
     sysid: byte;
     targetid: byte;
     msgid: byte;
@@ -44,7 +55,8 @@ type
 function CRC16X25(const msg: TMAVmessage; LengthFixPart: byte): uint16;
 function CheckCRC16X25(const msg: TMAVmessage; LengthFixPart: byte): boolean;
 procedure CRC_accumulate(const b: byte; var crcAccum: uint16);
-function CRC16MAV(const msg: TMAVmessage; LengthFixPart: byte; startpos: byte=1): uint16;
+function CRC16MAV(const msg: TMAVmessage; LengthFixPart: byte;
+                  startpos: byte=1; CRC_EXTRA: byte=0): uint16;
 function CheckCRC16MAV(const msg: TMAVmessage; LengthFixPart: byte): boolean;
 
 function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64; {Position/Anzahl Bytes}
@@ -89,6 +101,7 @@ procedure MavGetuInt123(data: TMAVmessage; pos: integer; var v1, v2, v3: uint16)
 function GetSerialNumber(const msg: TMAVmessage; pos: byte): string;
 function GetSystemTime(const data: TMAVmessage; pos: integer; var time: TDateTime): string;
 function MsgIDtoStr(id: uint32): string;
+function GetCRCextra(const msgid: integer): byte;
 
 implementation
 
@@ -158,7 +171,8 @@ begin
 end;
 
 {from checksum.h of MavlinkLib-master}
-function CRC16MAV(const msg: TMAVmessage; LengthFixPart: byte; startpos: byte=1): uint16;
+function CRC16MAV(const msg: TMAVmessage; LengthFixPart: byte;
+                        startpos: byte=1; CRC_EXTRA: byte=0): uint16;
 var
   i: integer;
 
@@ -167,7 +181,7 @@ begin
   for i:=startpos to LengthFixPart+msg.msglength-1 do begin
     CRC_accumulate(msg.msgbytes[i], result);
   end;
-  CRC_accumulate(0, result);
+  CRC_accumulate(CRC_EXTRA, result);
 end;
 
 function CheckCRC16MAV(const msg: TMAVmessage; LengthFixPart: byte): boolean;
@@ -835,6 +849,8 @@ begin
     400:  result:='play_tune v2';
     401:  result:='supported_tunes';
 
+    5002: result:='gimbal_cali';
+
     9000: result:='wheel_distance';                {2328'h}
     9005: result:='winch_status';
 
@@ -851,6 +867,18 @@ begin
   end;
 end;
 
+function GetCRCextra(const msgid: integer): byte;
+var
+  i: integer;
+
+begin
+  result:=CRC_EXTRA_FE;
+  for i:=0 to High(CRCextra[0]) do begin
+    if CRCextra[0, i]=msgid then begin
+      exit(CRCextra[1, i]);
+    end;
+  end;
+end;
 
 end.
 

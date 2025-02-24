@@ -125,6 +125,7 @@ File format:
 2024-08-25 V1.3 Chart added
 2024-09-04 V1.4 YGC messages added
 2024-09-14      BC Message types reworked
+2025-02-20 V1.5 CRC extra and CRC check for FD messages added
 
 *)
 
@@ -156,7 +157,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.6 2025-02-14';
+  AppVersion='V1.5 2025-02-20';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
