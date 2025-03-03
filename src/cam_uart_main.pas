@@ -1381,6 +1381,21 @@ begin
   end;
 end;
 
+procedure PayloadE90GimbalControl(msg: TMAVmessage; var list: TStringList);
+var
+  i: integer;
+begin
+  for i:=0 to 12 do begin
+    list[i*2+7]:='W'+IntToStr(i+1)+'=';
+    list[i*2+8]:=IntToStr(MavGetInt16(msg, i*2+10));
+  end;
+  list[21]:='Pan=';
+  list[23]:='Tilt=';
+  list[27]:='Pan mode=';
+  list[29]:='Tilt mode=';
+end;
+
+
 function YMAVdataToMergelist_FD(msg: TMAVmessage; timept: string): string;
 var
   i: integer;
@@ -1402,9 +1417,9 @@ begin
     for i:=LengthFixPartFD to msg.msglength+LengthFixPartFD-1 do
       datalist.Add(Form1.OutputFormatByte(msg.msgbytes[i]));
 
-//    case msg.msgid32 of
-//        Overwrite hex data with decoded values
-//    end;
+    case msg.msgid32 of
+      5000: PayloadE90GimbalControl(msg, datalist);
+    end;
 
     result:=MessageListToStr(datalist);
   finally
@@ -1986,7 +2001,7 @@ begin
   isLenght:=(edLength.Text='') or (msg.msglength=StrToIntDef(edLength.Text, 0));
   case rgMsgID.ItemIndex of
     0: isMsgID:=true;
-    1: isMsgID:=(msg.msgid=StrToIntDef(edOther.Text, 999)) or (edOther.Text='');
+    1: isMsgID:=(msg.msgid32=StrToIntDef(edOther.Text, 999)) or (edOther.Text='');
   else
     isMsgID:=msg.msgid=StrToInt(rgMsgID.Items[rgMsgID.ItemIndex]);
   end;
