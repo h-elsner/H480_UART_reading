@@ -576,7 +576,7 @@ begin
   for i:=0 to num do
     result:=result+dtsep+IntToHex(msg.msgbytes[i], 2);
   if WithCRC then
-    result:=result+dtsep+IntToHex(CRC16MAV(msg, LengthFixPart, 1, CRCextra), 4);
+    result:=result+dtsep+IntToHex(CRC16X25MAV(msg, LengthFixPart, 1, true, CRCextra), 4);
 end;
 
 {for gridData/data CSV the fix part:
@@ -2865,7 +2865,7 @@ var
         CRCextra:=GetCRCextra(MAVmsg.msgid32);
         if cbCheckCRC.Checked then begin
           MAVmsg.valid:=false;
-          If CRC16MAV(MAVmsg, LengthFixPartFD, 1, CRCextra)=
+          If CRC16X25MAV(MAVmsg, LengthFixPartFD, 1, true, CRCextra)=
                      MAVgetuint16(MAVmsg, MAVmsg.msglength+LengthFixPartFD) then
             MAVmsg.valid:=true;
         end;
@@ -2879,7 +2879,7 @@ var
             if id<999999 then begin
               if MAVmsg.msgid32=id then begin
                 for i:=0 to 255 do begin
-                  If CRC16MAV(MAVmsg, LengthFixPartFD, 1, i)=
+                  If CRC16X25MAV(MAVmsg, LengthFixPartFD, 1, true, i)=
                      MAVgetuint16(MAVmsg, MAVmsg.msglength+LengthFixPartFD) then begin
                     edCRCextra.Text:=IntToStr(i);
                     break;

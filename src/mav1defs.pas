@@ -62,13 +62,9 @@ type
   end;
 
 {Public functions and procedures}
-function CRC16X25(const msg: TMAVmessage; LengthFixPart: byte): uint16;
-function CheckCRC16X25(const msg: TMAVmessage; LengthFixPart: byte): boolean;
+function CRC16X25MAV(const msg: TMAVmessage; LengthFixPart: byte; startpos: byte=1;
+                     EXTRA: boolean=false; CRC_EXTRA: uint16=CRC_EXTRA_FE): uint16;
 procedure CRC_accumulate(const b: byte; var crcAccum: uint16);
-function CRC16MAV(const msg: TMAVmessage; LengthFixPart: byte;
-                  startpos: byte=1; CRC_EXTRA: byte=0): uint16;
-function CheckCRC16MAV(const msg: TMAVmessage; LengthFixPart: byte): boolean;
-
 function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64; {Position/Anzahl Bytes}
 function MavGetFloatFromBuf(msg: TMAVmessage; pos: integer): single; {Position, Länge immer 4}
 function MavGetUInt16(msg: TMAVmessage; pos: integer): uint16;
@@ -80,7 +76,7 @@ function ClearMAVmessage: TMAVmessage;
 function MsgIDToStr_FE(id: byte): string;
 function SysIDToStr(id: byte): string;
 function TargetIDToStr(id: byte): string;
-function SensorTypeToStr(id: byte): string;  {Message BC}
+function SensorTypeToStr(id: byte): string;           {Message BC}
 function MAV_PARAM_TYPEtoStr(const id: byte): string; {Specifies the datatype of a MAVLink parameter}
 function MAV_RESULTtoStr(const id: byte): string;
 function YGC_TypeToStr(y: byte): string;
@@ -115,12 +111,7 @@ function GetCRCextra(const msgid: integer): byte;
 
 implementation
 
-{Tabelle CCITT X25 CRC aus ST16 MavLinkPackage.java
- b ... Array of Byte
- ln... Länge Payload (Byte 1) der Message, Byte 0=$BC wird nicht genutzt
-       Schleife über Rest der Message 0...Länge Payload+Länge Fixpart-3}
-
-function CRC16X25(const msg: TMAVmessage; LengthFixPart: byte): uint16;
+procedure CRC_accumulate(const b: byte; var crcAccum: uint16);
 const
   Crc16Tab: array[0..255] of Word = (
     $0000, $1189, $2312, $329B, $4624, $57AD, $6536, $74BF,
@@ -156,47 +147,26 @@ const
     $F78F, $E606, $D49D, $C514, $B1AB, $A022, $92B9, $8330,
     $7BC7, $6A4E, $58D5, $495C, $3DE3, $2C6A, $1EF1, $0F78);
 
+begin
+  crcAccum:=((crcAccum shr 8) and $00FF) xor CRC16Tab[(b xor crcAccum) and $00FF];
+end;
+
+{Tabelle CCITT X25 CRC aus ST16 MavLinkPackage.java
+ b ... Array of Byte
+ ln... Länge Payload (Byte 1) der Message, Byte 0=$BC wird nicht genutzt
+       Schleife über Rest der Message 0...Länge Payload+Länge Fixpart-3}
+
+function CRC16X25MAV(const msg: TMAVmessage; LengthFixPart: byte; startpos: byte=1;
+                     EXTRA: boolean=false; CRC_EXTRA: uint16=CRC_EXTRA_FE): uint16;
 var i: integer;
 
 begin
   result:=$FFFF;                             {CRC Initializing}
-  for i:=2 to LengthFixPart+msg.msglength-1 do begin
-    result:=((result shr 8) and $00FF) xor CRC16Tab[(msg.msgbytes[i] xor result) and $00FF];
-  end;
-end;
-
-function CheckCRC16X25(const msg: TMAVmessage; LengthFixPart: byte): boolean;
-begin
-  result:=(CRC16X25(msg, LengthFixPart+2)=0);
-end;
-
-procedure CRC_accumulate(const b: byte; var crcAccum: uint16);
-var
-  tmp: uint8;
-
-begin
-  tmp:=b xor (crcAccum and $00FF);
-  tmp:=tmp xor (tmp shl 4);
-  crcAccum:=(crcAccum shr 8) xor (tmp shl 8) xor (tmp shl 3) xor (tmp shr 4);
-end;
-
-{from checksum.h of MavlinkLib-master}
-function CRC16MAV(const msg: TMAVmessage; LengthFixPart: byte;
-                        startpos: byte=1; CRC_EXTRA: byte=0): uint16;
-var
-  i: integer;
-
-begin
-  result:=$FFFF;
   for i:=startpos to LengthFixPart+msg.msglength-1 do begin
     CRC_accumulate(msg.msgbytes[i], result);
   end;
-  CRC_accumulate(CRC_EXTRA, result);
-end;
-
-function CheckCRC16MAV(const msg: TMAVmessage; LengthFixPart: byte): boolean;
-begin
-  result:=(CRC16MAV(msg, LengthFixPart)=MavGetUInt16(msg, LengthFixPart+msg.msglength));
+  if EXTRA then
+    CRC_accumulate(CRC_EXTRA, result);
 end;
 
 function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64; {Position/Anzahl Bytes}
