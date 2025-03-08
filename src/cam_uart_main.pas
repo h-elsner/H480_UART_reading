@@ -402,6 +402,13 @@ var
   end;
 end;
 
+function UnknownCRC32(msg: TMAVmessage): uint32;
+begin
+  result:=0;
+//  result:=WinHexCRC32(msg);
+end;
+
+
 function NewYMavMessageFE(list: TStringList; var lineidx: integer): TMAVmessage;
 var
   i: integer;
@@ -711,6 +718,7 @@ var
 begin
   if trim(gridData.Cells[aCol, aRow])='' then
     exit('');
+
   byteInfo:=FillByteInfo(gridRaw, aCol, aRow);
   result:=ShowByteAsDefault(ByteInfo);              {default}
   with byteinfo do begin
@@ -1948,6 +1956,12 @@ begin
             exit(3);
           end;
 
+          if (byte1=MagicFA) and (byte2=MagicFA) and                       {magic SR24}
+             (byte3=1) then begin
+            StatusBar1.Panels[3].Text:='No filter';
+            exit(8);
+          end;
+
         end;
       end;
     end;
@@ -2184,9 +2198,13 @@ procedure TForm1.gridRawPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
 begin
   if aRow>0 then begin
     case aCol of
-      4: if gridRaw.Cells[1, aRow]='55' then gridRaw.Canvas.Brush.Color:=clMsgID;
-      8: if gridRaw.Cells[1, aRow]='FE' then gridRaw.Canvas.Brush.Color:=clMsgID;
-      14: if (gridRaw.Cells[1, aRow]='FE') and (gridRaw.Cells[8, aRow]='FF') then
+      4: if gridRaw.Cells[1, aRow]='55' then
+        gridRaw.Canvas.Brush.Color:=clMsgID;
+      5: if gridRaw.Cells[1, aRow]=MagicFA_AsText then
+        gridRaw.Canvas.Brush.Color:=clMsgID;
+      8: if gridRaw.Cells[1, aRow]=MagicFE_AsText then
+        gridRaw.Canvas.Brush.Color:=clMsgID;
+      14: if (gridRaw.Cells[1, aRow]=MagicFE_AsText) and (gridRaw.Cells[8, aRow]='FF') then
         gridRaw.Canvas.Brush.Color:=clActionType;
     end;
   end;
@@ -2941,6 +2959,83 @@ var
     inlist.Clear;
   end;
 
+  procedure ReadOneQ500fileFA(fn: string);
+  var
+    lineindex: integer;
+    MAVmsg: TMAVmessage;
+    tp: string;
+    b: byte;
+    i: integer;
+    csvline: string;
+
+  begin
+    btnReLoad.Enabled:=true;;
+    inlist.LoadFromFile(fn);
+    lineindex:=1;
+    StatusBar1.Panels[0].Text:=IntToStr(inlist.Count-1);
+    repeat
+      tp:=SetLengthTime(inlist[lineindex].Split([sep])[0]);
+      if inlist[lineindex].Split([sep])[1]=MagicFA_AsText then begin
+        inc(lineindex);
+        if inlist[lineindex].Split([sep])[1]=MagicFA_AsText then begin
+          MAVmsg:=Default(TMAVmessage);
+          MAVmsg.msgbytes[0]:=MagicFA;
+          MAVmsg.msgbytes[1]:=MagicFA;
+          inc(lineindex);
+          b:=HexStrValueToInt(inlist[lineindex].Split([sep])[1]);
+          MAVmsg.msgbytes[2]:=b;
+          inc(lineindex);
+          if b=1 then begin
+            MAVmsg.msgbytes[3]:=HexStrValueToInt(inlist[lineindex].Split([sep])[1]);
+            MAVmsg.msglength:=MAVmsg.msgbytes[3];
+            if MAVmsg.msglength>0 then begin
+
+              if MAVmsg.msglength=MagicFA then
+                MAVmsg.msglength:=$56;                {strange behavior, try with standard length $56=86}
+
+              for i:=4 to MAVmsg.msglength+3 do begin
+                inc(lineindex);
+                MAVmsg.msgbytes[i]:=HexStrValueToInt(inlist[lineindex].Split([sep])[1]);
+              end;
+            end;
+          end else begin
+            MAVmsg.msglength:=0;
+          end;
+        end;
+        inc(lineindex);
+        MAVmsg.valid:=true;
+
+// Fill raw table
+        csvline:=tp;
+        if MAVmsg.msglength>0 then begin
+          for i:=0 to MAVmsg.msglength+3 do
+            csvline:=csvline+dtsep+IntToHex(MAVmsg.msgbytes[i], 2);
+
+          if cbRawWithCRC.Checked then
+            csvline:=csvline+dtsep+IntToHex(UnknownCRC32(MAVmsg), 8);
+        end else begin
+          for i:=0 to 2 do
+            csvline:=csvline+dtsep+IntToHex(MAVmsg.msgbytes[i], 2);
+        end;
+        addlist_raw.Add(csvline);
+
+// Fill data table
+        csvline:=tp+dtsep;
+        if MAVmsg.msglength>0 then begin
+          csvline:=csvline+dtsep+IntToHex(MAVmsg.msgbytes[4], 2)
+                   +dtsep+dtsep+IntToHex(MAVmsg.msgbytes[2], 2)+dtsep+dtsep;
+          for i:=5 to MAVmsg.msglength+3 do
+            csvline:=csvline+dtsep+IntToHex(MAVmsg.msgbytes[i], 2);
+//          csvline:=csvline+dtsep+'='+dtsep+FormatFloat(mlfl, MavGetFloatFromBuf(MAVmsg, 5));
+        end else
+          csvline:=csvline+IntToHex(MAVmsg.msgbytes[2], 2);
+        addlist_data.Add(csvline);
+      end else
+        inc(lineindex);
+    until lineindex>=inlist.Count;
+    inlist.Clear;
+  end;
+
 begin
   inlist:=TStringList.Create;
   addlist_raw:=TStringList.Create;
@@ -3002,6 +3097,7 @@ begin
         3: ReadOneSR24File(OpenDialog.Files[i]);
 //        4: DecodeSensorFile(OpenDialog.Files[i]);
         7: ReadOneYMAVfileFD(OpenDialog.Files[i]);
+        8: ReadOneQ500fileFA(OpenDialog.Files[i]);
       end;
     end;
 

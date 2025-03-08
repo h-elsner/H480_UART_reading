@@ -20,7 +20,9 @@ const
   LengthFixPartFE=8;
   MagicBC=$BC;
   MagicFD=$FD;
+  MagicFA=$FA;
   MagicFE=$FE;
+  MagicFA_AsText='0xFA';
   MagicFE_AsText='0xFE';
   MagicFD_AsText='0xFD';
 
@@ -108,6 +110,9 @@ function GetSerialNumber(const msg: TMAVmessage; pos: byte): string;
 function GetSystemTime(const data: TMAVmessage; pos: integer; var time: TDateTime): string;
 function MsgIDtoStr(id: uint32): string;
 function GetCRCextra(const msgid: integer): byte;
+
+function Fletcher32_Checksum(msg: TMAVmessage): uint32;
+
 
 implementation
 
@@ -859,6 +864,22 @@ begin
       exit(CRCextra[1, i]);
     end;
   end;
+end;
+
+{https://github.com/cabinetcat/FletchPas/blob/master/FletchPas.pas}
+function Fletcher32_Checksum(msg: TMAVmessage): uint32;
+var
+   sum1, sum2: uint16;
+   i: byte;
+
+begin
+  sum1:=0;
+  sum2:=0;
+  for i:=0 to msg.msglength-1 do begin
+    sum1+=msg.msgbytes[i] mod 65535;
+    sum2+=sum1 mod 65535;
+  end;
+  result:=(LongWord(sum1) shl 16) or sum2;
 end;
 
 end.

@@ -157,7 +157,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.5 2025-03-01';
+  AppVersion='V1.6 2025-03-07';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
@@ -172,6 +172,7 @@ const
 
   v1magicbyte=$FE;
   sr24magic=$55;
+  MagicQ500=$FA;
 
 type TByteInfo = record
        ByteStr: string[2];
@@ -207,6 +208,7 @@ function GetInt32(b1, b2, b3, b4: byte): int32;
 function GetUInt32(b1, b2, b3, b4: byte): uint32;
 function GetFloat(b1, b2, b3, b4: byte): single;
 function SetLengthTime(tp: string; len: byte=20): string;
+
 
 
 implementation
@@ -322,6 +324,13 @@ begin
                 pos:=aCol;
                 fix:=pos<6;
               end;
+          end;
+        end else begin
+          if MagicByte=MagicQ500 then begin
+            MsgID:=StrToIntDef(hexid+gridraw.Cells[5, aRow], 0);
+            len:=StrToIntDef(hexid+gridraw.Cells[4, aRow], 5);
+            pos:=aCol-1;
+            fix:=aCol<6;
           end;
         end;
       end;
