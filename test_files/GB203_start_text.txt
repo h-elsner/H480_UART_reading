@@ -1,0 +1,95 @@
+GB203 V1.05
+Temperature Off
+
+set is OK!
+Motor Zero Set is 
+
+OK!
+Front Set is OK!
+Acc Offs
+
+et is OK!
+MPU6050 is OK!
+
+
+
+
+
+GB203 V1.05
+Temperature Offset is OK!
+Motor Zero Set is OK!
+Front Set is OK!
+Acc Offset is OK!
+MPU6050 is OK!
+
+
+------------------------------------------
+
+
+CGO3 V1.05
+Temperature Offs
+
+et is OK!
+Motor Zero Set is O
+
+K!
+Front Set is OK!
+Acc Offse
+
+t is OK!
+MPU6050 is OK!
+
+
+ Static Start!
+
+
+
+
+
+CGO3 V1.05
+Temperature Offset is OK!
+Motor Zero Set is OK!
+Front Set is OK!
+Acc Offset is OK!
+MPU6050 is OK!
+
+ Static Start!
+
+
+-------------------------------
+Textbuffer
+
+
+
+CGO3 V1.05
+Temperature Offset is OK!
+Motor Zero Set is OK!
+Front Set is OK!
+Acc Offset is OK!
+MPU6050 is OK!
+ Static Start!
+
+
+CGO3 V1.05
+Temperature Offset is OK!
+Motor Zero Set is OK!
+Front Set is OK!
+Acc Offset is OK!
+MPU6050 is OK!
+ Static Start!
+
+
+CGO3 V1.05
+Temperature Offset is OK!
+Motor Zero Set is OK!
+Front Set is OK!
+Acc Offset is OK!
+ Slow Start!
+ Debug Start!
+IMU communication error!
+NO IMU!
+IMU communication error!
+NO IMU!
+IMU communication error!
+NO IMU!
+
