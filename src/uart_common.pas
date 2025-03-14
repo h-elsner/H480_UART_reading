@@ -157,7 +157,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.6 2025-03-07';
+  AppVersion='V1.6 2025-03-13';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 
@@ -186,7 +186,7 @@ type TByteInfo = record
        SysID: byte;
        TargetID: byte;   {= Componente ID}
        ActionType: byte;
-       pos: integer;
+       index: integer;
        fix: boolean;
      end;
 
@@ -266,89 +266,98 @@ function FillByteInfo(gridraw: TStringGrid; aCol, aRow: integer): TByteInfo;
 var
   p: integer;
 
-begin
-  with result do begin
-    ByteStr:='';
-    nextByte1:=0;
-    nextByte2:=0;
-    nextByte3:=0;
-    len:=0;
-    MsgID:=88;
-    SysID:=88;
-    TargetID:=88;
-    ActionType:=88;
-    pos:=0;            {position where the byte was from in raw table}
-    fix:=false;
+  procedure v1magicbyteInfo;
+  begin
+    result.MsgID:=StrToIntDef(hexid+gridraw.Cells[8, aRow], 0);
+    result.SysID:=StrToIntDef(hexid+gridraw.Cells[4, aRow], 0);
+    result.TargetID:=StrToIntDef(hexid+gridraw.Cells[6, aRow], 0);
+    result.MsgID:=StrToIntDef(hexid+gridraw.Cells[8, aRow], 0);
 
-    if aCol<gridraw.ColCount-2 then begin
-      MagicByte:=StrToIntDef(hexid+gridraw.Cells[1, aRow], 0);
-      if MagicByte=v1magicbyte then begin                   {Camera communication}
-        MsgID:=StrToIntDef(hexid+gridraw.Cells[8, aRow], 0);
-        SysID:=StrToIntDef(hexid+gridraw.Cells[4, aRow], 0);
-        TargetID:=StrToIntDef(hexid+gridraw.Cells[6, aRow], 0);
-        MsgID:=StrToIntDef(hexid+gridraw.Cells[8, aRow], 0);
-
-        if MsgID=255 then begin
-          magicByte:=$BC;
-          len:=StrToIntDef(hexid+gridraw.Cells[10, aRow], 0);
-          pos:=aCol+5;
-          ActionType:=StrToIntDef(hexid+gridraw.Cells[14, aRow], 0);
-          fix:=pos<15;
-        end else begin                                     {has no ActionType}
-          len:=StrToIntDef(hexid+gridraw.Cells[2, aRow], 0);
-          pos:=aCol+2;
-          fix:=pos<9;
-        end;
-
-      end else begin
-        if MagicByte=SR24magic then begin                  {SR24 commincation, has no Sys/TargetID}
-          MsgID:=StrToIntDef(hexid+gridraw.Cells[4, aRow], 0);
-          len:=StrToIntDef(hexid+gridraw.Cells[3, aRow], 0);
-          pos:=aCol+3;
-          fix:=aCol<10;
-
-          case msgID of
-            2:                                             {Telemetry}
-              begin
-                pos:=aCol;
-                fix:=aCol<7;
-              end;
-            4:                                             {Bind}
-              begin
-                pos:=aCol;
-                fix:=aCol<7;
-              end;
-            20:                                            {Additional data}
-              begin
-                ActionType:=StrToIntDef(hexid+gridraw.Cells[5, aRow], 0);
-                pos:=aCol;
-                fix:=pos<6;
-              end;
-          end;
-        end else begin
-          if MagicByte=MagicQ500 then begin
-            MsgID:=StrToIntDef(hexid+gridraw.Cells[5, aRow], 0);
-            len:=StrToIntDef(hexid+gridraw.Cells[4, aRow], 5);
-            pos:=aCol-1;
-            fix:=aCol<6;
-          end;
-        end;
-      end;
-      ByteStr:=gridraw.Cells[pos, aRow];
-      AsByte:=StrToIntDef(hexid+ByteStr, 0);
-      p:=pos+1;
-      if p=gridraw.ColCount then
-        exit;
-      nextByte1:=StrToIntDef(hexid+gridraw.Cells[p, aRow], 0);
-      inc(p);
-      if p=gridraw.ColCount then
-        exit;
-      nextByte2:=StrToIntDef(hexid+gridraw.Cells[pos+2, aRow], 0);
-      inc(p);
-      if p=gridraw.ColCount then
-        exit;
-      nextByte3:=StrToIntDef(hexid+gridraw.Cells[pos+3, aRow], 0);
+    if result.MsgID=255 then begin
+      result.magicByte:=$BC;
+      result.len:=StrToIntDef(hexid+gridraw.Cells[10, aRow], 0);
+      result.index:=aCol+5;
+      result.ActionType:=StrToIntDef(hexid+gridraw.Cells[14, aRow], 0);
+      result.fix:=result.index<15;
+    end else begin                                     {has no ActionType}
+      result.len:=StrToIntDef(hexid+gridraw.Cells[2, aRow], 0);
+      result.index:=aCol+2;
+      result.fix:=result.index<9;
     end;
+  end;
+
+  procedure SR24magicInfo;
+  begin
+    result.MsgID:=StrToIntDef(hexid+gridraw.Cells[4, aRow], 0);
+    result.len:=StrToIntDef(hexid+gridraw.Cells[3, aRow], 0);
+    result.index:=aCol+3;
+    result.fix:=aCol<10;
+
+    case result.msgID of
+      2:                                             {Telemetry}
+        begin
+          result.index:=aCol;
+          result.fix:=aCol<7;
+        end;
+      4:                                             {Bind}
+        begin
+          result.index:=aCol;
+          result.fix:=aCol<7;
+        end;
+      20:                                            {Additional data}
+        begin
+          result.ActionType:=StrToIntDef(hexid+gridraw.Cells[5, aRow], 0);
+          result.index:=aCol;
+          result.fix:=result.index<6;
+        end;
+    end;
+  end;
+
+  procedure MagicQ500Info;
+  begin
+    result.MsgID:=StrToIntDef(hexid+gridraw.Cells[5, aRow], 0);
+    result.len:=StrToIntDef(hexid+gridraw.Cells[4, aRow], 5);
+    result.index:=aCol-1;
+    result.fix:=aCol<6;
+  end;
+
+  procedure GB203Info;
+  begin
+    result.MsgID:=StrToIntDef(hexid+gridraw.Cells[3, aRow], 0);
+    result.len:=35;
+    result.index:=aCol-3;
+  end;
+
+begin
+  result:=Default(TByteInfo);
+  result.MsgID:=88;
+  result.SysID:=88;
+  result.TargetID:=88;
+  result.ActionType:=88;
+
+  if aCol<gridraw.ColCount-2 then begin
+    result.MagicByte:=StrToIntDef(hexid+gridraw.Cells[1, aRow], 0);
+    case result.MagicByte of
+      v1magicbyte: v1magicbyteInfo;
+      SR24magic: SR24magicInfo;
+      MagicQ500: MagicQ500Info;
+      $88: GB203Info;
+    end;
+
+    result.ByteStr:=gridraw.Cells[result.index, aRow];
+    result.AsByte:=StrToIntDef(hexid+result.ByteStr, 0);
+    p:=result.index+1;
+    if p=gridraw.ColCount then
+      exit;
+    result.nextByte1:=StrToIntDef(hexid+gridraw.Cells[p, aRow], 0);
+    inc(p);
+    if p=gridraw.ColCount then
+      exit;
+    result.nextByte2:=StrToIntDef(hexid+gridraw.Cells[result.index+2, aRow], 0);
+    inc(p);
+    if p=gridraw.ColCount then
+      exit;
+    result.nextByte3:=StrToIntDef(hexid+gridraw.Cells[result.index+3, aRow], 0);
   end;
 end;
 

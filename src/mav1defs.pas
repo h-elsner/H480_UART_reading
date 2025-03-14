@@ -30,6 +30,8 @@ const
   CRC_EXTRA_cmd=224;
   CRC_EXTRA_heartbeat=50;
 
+  CGO3msgLen=35;
+
   rsUnknown_='Unknown_';
   rsUndef_='Undef_';
 
@@ -67,7 +69,8 @@ type
 function CRC16X25MAV(const msg: TMAVmessage; LengthFixPart: byte; startpos: byte=1;
                      EXTRA: boolean=false; CRC_EXTRA: uint16=CRC_EXTRA_FE): uint16;
 procedure CRC_accumulate(const b: byte; var crcAccum: uint16);
-function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64; {Position/Anzahl Bytes}
+function GB203CRC8(const data: TMAVmessage; index: byte=0): byte;    {Create CRC8 checksum}
+function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64;       {Position/Anzahl Bytes}
 function MavGetFloatFromBuf(msg: TMAVmessage; pos: integer): single; {Position, Länge immer 4}
 function MavGetUInt16(msg: TMAVmessage; pos: integer): uint16;
 function MavGetInt16(msg: TMAVmessage; pos: integer): int16;
@@ -79,6 +82,7 @@ function MsgIDToStr_FE(id: byte): string;
 function SysIDToStr(id: byte): string;
 function TargetIDToStr(id: byte): string;
 function SensorTypeToStr(id: byte): string;           {Message BC}
+function CGO3msgIDtoStr(const id: byte): string;
 function MAV_PARAM_TYPEtoStr(const id: byte): string; {Specifies the datatype of a MAVLink parameter}
 function MAV_RESULTtoStr(const id: byte): string;
 function YGC_TypeToStr(y: byte): string;
@@ -110,6 +114,7 @@ function GetSerialNumber(const msg: TMAVmessage; pos: byte): string;
 function GetSystemTime(const data: TMAVmessage; pos: integer; var time: TDateTime): string;
 function MsgIDtoStr(id: uint32): string;
 function GetCRCextra(const msgid: integer): byte;
+function TextOut(const msg: TMAVmessage; pos, len: uint16): string;
 
 function Fletcher32_Checksum(msg: TMAVmessage): uint32;
 
@@ -172,6 +177,40 @@ begin
   end;
   if EXTRA then
     CRC_accumulate(CRC_EXTRA, result);
+end;
+
+(*
+function Y_CRC8(data: TMAVmessage; index, lenghtmsg: byte): byte; {Create CRC8 checksum}
+var
+  b, i: byte;
+
+begin                                                      {Translated from ST24.c}
+  result:=0;
+  for i:=index to lenghtmsg+1 do begin                         {i points to databyte in array}
+    b:=$80;
+    repeat
+      if (result and $80) <>0 then begin
+        result:=result shl 1;
+        result:=result xor 7;
+      end else
+        result:=result shl 1;
+      if (data.msgbytes[i] and b)<>0 then
+        result:=result xor 7;
+      b:=b shr 1;
+    until b=0;
+  end;
+end;                   *)
+
+function GB203CRC8(const data: TMAVmessage; index: byte=0): byte;    {Create CRC8 checksum}
+var
+  i: byte;
+
+begin
+  result:=0;
+  for i:=2 to CGO3msgLen-3 do begin
+    result:=result+data.msgbytes[i+index];
+  end;
+  result:=result and $FF;
 end;
 
 function MavGetUInt64(msg: TMAVmessage; pos: integer): uint64; {Position/Anzahl Bytes}
@@ -332,6 +371,14 @@ begin
     178: result:='AHRS2';
     193: result:='EKF_STATUS_REPORT';              {Extended Kalman Filter}
     253: result:='STATUS_TEXT';
+  end;
+end;
+
+function CGO3msgIDtoStr(const id: byte): string;
+begin
+  result:='MsgID'+IntToStr(id)+' (0x'+IntToHex(id, 2)+')';
+  case id of
+    254: result:='TEXT message';
   end;
 end;
 
@@ -881,6 +928,19 @@ begin
   end;
   result:=(LongWord(sum1) shl 16) or sum2;
 end;
+
+function TextOut(const msg: TMAVmessage; pos, len: uint16): string;
+var
+  i: uint16;
+
+begin
+  result:='';
+  for i:=0 to len-1 do begin
+    if msg.msgbytes[pos+i] in [10, 13, 32..127] then
+      result:=result+chr(msg.msgbytes[pos+i]);
+  end;
+end;
+
 
 end.
 

@@ -167,7 +167,6 @@ type
     btnClearRed: TButton;
     btnSaveProto: TButton;
     cbAutoSave: TCheckBox;
-    cbCoordForDocu: TCheckBox;
     cbOrOther: TCheckBox;
     Chart1: TChart;
     AutoScaleLeft: TAutoScaleAxisTransform;
@@ -368,7 +367,7 @@ var
     end;
   end;
 
-  begin
+begin
   result:=false;
   z:=0;                                                  {Counter for unsynced bytes}
   buf:=empty;                                            {Reset buffer}
@@ -392,14 +391,6 @@ var
     end;
   until result or                                        {Valid message but w/o CRC check}
        (z>maxlen);                                       {Too long message}
-
-  if Form1.cbCoordForDocu.Checked then begin
-    if (data[3]=2) and (data[9]=docufix) then
-      data[8]:=data[8]-random(20)+2
-    else
-      if (data[3]=3) and (data[29]=docufix) then
-        data[28]:=data[28]-random(22)+2;
-  end;
 end;
 
 function UnknownCRC32(msg: TMAVmessage): uint32;
@@ -439,19 +430,7 @@ begin
       sysid:=msgbytes[3];
       targetid:=msgbytes[5];
       msgid:=msgbytes[7];
-
-      if Form1.cbCoordForDocu.Checked then begin           {Create fake coordinates}
-        if (msgbytes[11]=docufix) and ((msgid=2) or (msgid=8)) then
-          msgbytes[10]:=msgbytes[10]-Random(100)+2
-        else
-          if msgid=255 then
-            if msgbytes[33]=docufix then
-              msgbytes[32]:=msgbytes[32]-Random(50)+2
-            else
-              if msgbytes[12]=docufix then
-                msgbytes[11]:=msgbytes[11]-Random(50)+2;
-      end;
-
+      msgid32:=msgid;
     end;
   end;
   inc(lineIdx);                                          {Next message byte}
@@ -590,7 +569,8 @@ end;
   0 Time
   1 Sequ_No
   2 Msg_ID
-  3 ActionType                                                           4 Sys_ID
+  3 ActionType
+  4 Sys_ID
   5 Target_ID
   6 RSSI
   from 7 on payload}
@@ -1363,7 +1343,7 @@ begin
     datalist[5]:=TargetIDToStr(msg.targetid);      {5 Target_ID}
 
 // Payload
-    if msg.msgid=255 then begin
+    if (msg.msgid=255) and (msg.msglength>13) then begin
       datalist[3]:=SensorTypeToStr(msg.msgbytes[13]); {Sensor msg type to Action Type: optional}
       for i:=11 to msg.msglength+5 do  {Only the 'inner' payload of the BC-messages w/o its CRC}
         datalist.Add(Form1.OutputFormatByte(msg.msgbytes[i]))
@@ -1907,17 +1887,20 @@ end;
  5: Framing Error
  6: USB-Recording     (FD messages)
  7: YMAV FD message
+ 8: Q500 GUI
+ 9: CGO3 msg 88 77 .... 99
  }
 
 function TForm1.CheckRawFileFormat(fn: string): byte;
 var
   inlist: TStringList;
-  i: integer;
+  i, framingerrorcounter: integer;
   byte1, byte2, byte3: byte;
   binfile: TMemoryStream;
 
 begin
   result:=0;
+  framingerrorcounter:=0;
   Inlist:=TStringList.Create;
   try
     inlist.LoadFromFile(fn);
@@ -1928,8 +1911,11 @@ begin
         result:=1;
       if InList.Count>MinimalBytesPerMessage then begin
         for i:=1 to Inlist.Count-MinimalBytesPerMessage do begin
-//          if pos(sep+sep+'Error', inlist[i])>0 then
-//            exit(5);
+          if pos(sep+sep+'Error', inlist[i])>0 then begin
+            inc(framingerrorcounter);
+            if framingerrorcounter>32 then
+              exit(5);
+          end;
           byte1:=HexStrValueToInt(inlist[i].Split([sep])[1]);
           byte2:=HexStrValueToInt(inlist[i+1].Split([sep])[1]);
           byte3:=HexStrValueToInt(inlist[i+2].Split([sep])[1]);
@@ -1956,10 +1942,15 @@ begin
             exit(3);
           end;
 
-          if (byte1=MagicFA) and (byte2=MagicFA) and                       {magic SR24}
+          if (byte1=MagicFA) and (byte2=MagicFA) and                       {magic Q500 GUI}
              (byte3=1) then begin
             StatusBar1.Panels[3].Text:='No filter';
             exit(8);
+          end;
+
+          if (byte1=$88) and (byte2=$77) then begin                        {magic CGO3 at 230400 baud}
+            StatusBar1.Panels[3].Text:='No filter';
+            exit(9);
           end;
 
         end;
@@ -2245,7 +2236,7 @@ function GetAxisInfo(pkt: TByteInfo): string;
 begin
   result:='';
   with pkt do begin
-    result:=IntToHex(MagicByte, 2)+'  Msg '+IntToStr(MsgId)+' --> byte position: '+ IntToStr(pos-1);
+    result:=IntToHex(MagicByte, 2)+'  Msg '+IntToStr(MsgId)+' --> byte position: '+ IntToStr(index-1);
   end;
 end;
 
@@ -2805,7 +2796,6 @@ begin
   end;
 end;
 
-
 procedure TForm1.DecodeUART;
 var
   inlist, addlist_raw, addlist_data: TStringList;
@@ -3036,6 +3026,70 @@ var
     inlist.Clear;
   end;
 
+  procedure ReadOneCGO3file88(fn: string);
+  var
+    lineindex: integer;
+    MAVmsg: TMAVmessage;
+    tp: string;
+    i: integer;
+    csvline: string;
+
+  begin
+    btnReLoad.Enabled:=true;
+    inlist.LoadFromFile(fn);
+    lineindex:=1;
+    StatusBar1.Panels[0].Text:=IntToStr(inlist.Count-1);
+    repeat
+      tp:=SetLengthTime(inlist[lineindex].Split([sep])[0]);
+      if inlist[lineindex].Split([sep])[1]='0x88' then begin
+        inc(lineindex);
+        if inlist[lineindex].Split([sep])[1]='0x77' then begin
+          MAVmsg:=Default(TMAVmessage);
+          MAVmsg.msgbytes[0]:=$88;
+          MAVmsg.msgbytes[1]:=$77;
+          MAVmsg.msglength:=35;
+          for i:=2 to MAVmsg.msglength-1 do begin
+            inc(lineindex);
+            MAVmsg.msgbytes[i]:=HexStrValueToInt(inlist[lineindex].Split([sep])[1]);
+          end;
+          inc(lineindex);
+          if MAVmsg.msgbytes[34]=$99 then begin
+            MAVmsg.msgid:=MAVmsg.msgbytes[2];
+            MAVmsg.msgid32:=MAVmsg.msgid;
+            MAVmsg.valid:=true;
+          end;
+
+  // Fill raw table
+          csvline:=tp;
+          for i:=0 to MAVmsg.msglength-1 do
+            csvline:=csvline+dtsep+IntToHex(MAVmsg.msgbytes[i], 2);
+
+          if cbRawWithCRC.Checked then
+            csvline:=csvline+dtsep+IntToHex(GB203CRC8(MAVmsg), 2);
+
+          if DoFilterYMAV(Mavmsg) then
+            addlist_raw.Add(csvline);
+
+  // Fill data table
+          csvline:=tp+dtsep+dtsep+CGO3msgIDtoStr(MAVmsg.msgid)+dtsep+dtsep+dtsep+dtsep;
+          case MAVmsg.msgid of
+            254: csvline:=csvline+dtsep+TextOut(MAVmsg, 4, 29);
+          else
+            for i:=3 to MAVmsg.msglength-2 do
+              csvline:=csvline+dtsep+IntToHex(MAVmsg.msgbytes[i], 2);
+          end;
+
+          if DoFilterYMAV(Mavmsg) then
+            addlist_data.Add(csvline);
+        end else
+          inc(lineindex);
+      end else
+        inc(lineindex);
+    until lineindex>=inlist.Count;
+    inlist.Clear;
+  end;
+
+
 begin
   inlist:=TStringList.Create;
   addlist_raw:=TStringList.Create;
@@ -3098,6 +3152,7 @@ begin
 //        4: DecodeSensorFile(OpenDialog.Files[i]);
         7: ReadOneYMAVfileFD(OpenDialog.Files[i]);
         8: ReadOneQ500fileFA(OpenDialog.Files[i]);
+        9: ReadOneCGO3file88(OpenDialog.Files[i]);
       end;
     end;
 
