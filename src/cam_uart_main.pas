@@ -278,12 +278,18 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure gbExtraToolDblClick(Sender: TObject);
+    procedure gridDataDblClick(Sender: TObject);
     procedure gridDataGetCellHint(Sender: TObject; ACol, ARow: Integer;
       var HintText: String);
+    procedure gridDataHeaderClick(Sender: TObject; IsColumn: Boolean;
+      Index: Integer);
     procedure gridDataPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
       aState: TGridDrawState);
+    procedure gridRawDblClick(Sender: TObject);
     procedure gridRawGetCellHint(Sender: TObject; ACol, ARow: Integer;
       var HintText: String);
+    procedure gridRawHeaderClick(Sender: TObject; IsColumn: Boolean;
+      Index: Integer);
     procedure gridRawPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
       aState: TGridDrawState);
     procedure Memo1MouseWheelDown(Sender: TObject; Shift: TShiftState;
@@ -472,7 +478,6 @@ begin
   inc(lineIdx);                                          {Next message byte}
 end;
 
-
 function MessageListToStr(list: TStringList): string;
 var
   i: integer;
@@ -646,6 +651,46 @@ begin
     WriteAltMSL(list, pos+8, alt);
 end;
 
+function FilterColumn(var aGrid: TStringGrid;
+                      const aCol: integer; aText: string; reverse: boolean=false): integer;
+var
+  i: integer;
+  found: boolean;
+
+begin
+  result:=0;
+  aGrid.BeginUpdate;
+  try
+    for i:=aGrid.FixedRows to aGrid.RowCount-1 do begin
+      if reverse then
+        found:=aGrid.Cells[aCol, i]<>aText
+      else
+        found:=aGrid.Cells[aCol, i]=aText;
+      if found then begin
+        aGrid.RowHeights[i]:=aGrid.DefaultRowHeight;
+        result:=result+1;
+      end else
+        aGrid.RowHeights[i]:=0;
+    end;
+  finally
+    aGrid.EndUpdate;
+  end;
+end;
+
+procedure ResetAllFilterColumn(var aGrid: TStringGrid);
+var
+  i: integer;
+
+begin
+  aGrid.BeginUpdate;
+  try
+    for i:=aGrid.FixedRows to aGrid.RowCount-1 do
+      aGrid.RowHeights[i]:=aGrid.DefaultRowHeight;
+  finally
+    aGrid.EndUpdate;
+  end;
+end;
+
 function GetRawCellInfo(s: string; aCol, aRow: integer): string;
 var
   b: byte;
@@ -752,7 +797,6 @@ begin
   if msg.targetid=2 then begin
     // ToDo asap
     MavGetInt123(msg, 8, v1, v2, v3);
-
 
 
     list[21]:='Pan knob=';
@@ -2159,6 +2203,14 @@ begin
   edID.SetFocus;
 end;
 
+procedure TForm1.gridDataDblClick(Sender: TObject);
+begin
+  if gridData.Col>1 then begin
+    FilterColumn(gridData, gridData.Col, gridData.Cells[gridData.Col, gridData.Row]);
+  end else
+    ResetAllFilterColumn(gridData);
+end;
+
 procedure TForm1.gridDataGetCellHint(Sender: TObject; ACol, ARow: Integer;
                                      var HintText: String);
 begin
@@ -2168,11 +2220,26 @@ begin
   end;
 end;
 
+procedure TForm1.gridDataHeaderClick(Sender: TObject; IsColumn: Boolean;
+  Index: Integer);
+begin
+  gridData.Col:=0;
+  ResetAllFilterColumn(gridData);
+end;
+
 procedure TForm1.gridDataPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
   aState: TGridDrawState);
 begin
   if (aCol>6) and ((((aCol+1) div 4) mod 2)=0) and (aRow>0) then
     griddata.Canvas.Brush.Color:=clGridHighlightRows;
+end;
+
+procedure TForm1.gridRawDblClick(Sender: TObject);
+begin
+  if (gridRaw.Col>1) and (gridRaw.Row>0) then begin
+    FilterColumn(gridRaw, gridRaw.Col, gridRaw.Cells[gridRaw.Col, gridRaw.Row]);
+  end else
+    ResetAllFilterColumn(gridRaw);
 end;
 
 procedure TForm1.gridRawGetCellHint(Sender: TObject; ACol, ARow: Integer;
@@ -2182,6 +2249,13 @@ begin
   if aRow>0 then begin
     HintText:=GetRawCellInfo(gridRaw.Cells[aCol, aRow], aCol, aRow);
   end;
+end;
+
+procedure TForm1.gridRawHeaderClick(Sender: TObject; IsColumn: Boolean;
+  Index: Integer);
+begin
+  gridRaw.Col:=0;
+  ResetAllFilterColumn(gridRaw);
 end;
 
 procedure TForm1.gridRawPrepareCanvas(Sender: TObject; aCol, aRow: Integer;
