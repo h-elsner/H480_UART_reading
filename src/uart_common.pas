@@ -126,6 +126,9 @@ File format:
 2024-09-04 V1.4 YGC messages added
 2024-09-14      BC Message types reworked
 2025-02-20 V1.5 CRC extra and CRC check for FD messages added
+2025-04-22 V1.6 Autofilter added - double click on a value in the table
+2025-05-10 V1.7 H920 message ID 5 (H920 telemetry) added,
+                bug fix for better SR24 file format identification
 
 *)
 
@@ -138,8 +141,6 @@ function TForm1.CheckRawFileFormat(fn: string): byte;
 function UARTreadMsg(var data: TPayLoad; list: TStringList; var idx: integer): boolean;   {Detect and read one message from data stream}
 function NewYMavMessage(var list: TStringList; var lineidx: integer): TMAVmessage;        {Return a YMAV message}
 function NewV1MavMessage(var list: TStringList; var lineidx: integer): TMAVmessage;       {ToDo}
-
-
 
 function TForm1.DoFilterYMAV(msg: TMAVmessage): boolean;
 function TForm1.DoFilterSR24(msg: TPayload): boolean;
@@ -157,7 +158,7 @@ uses
 
 const
   AppName='CGO3+/SR24 UART';
-  AppVersion='V1.6 2025-03-13';
+  AppVersion='V1.7 2025-05-16';
   meinName='H. Elsner';
   homepage='http://h-elsner.mooo.com';
 

@@ -570,6 +570,20 @@ begin
     result:=result+dtsep+IntToHex(CRC16X25MAV(msg, LengthFixPart, 1, true, CRCextra), 4);
 end;
 
+function SR24RawMessageToMergelist(Const msg: TPayLoad; timept: string;
+                               LengthFixPart: byte; WithCRC: boolean=false): string;
+var
+  i, num: integer;
+
+begin
+  result:=timept;
+  num:=msg[2]+1;
+  if WithCRC then
+    num:=num+1;
+  for i:=0 to num do
+    result:=result+dtsep+IntToHex(msg[i], 2);
+end;
+
 {for gridData/data CSV the fix part:
   0 Time
   1 Sequ_No
@@ -1981,7 +1995,7 @@ begin
 
           if (byte1=header1) and (byte2=header2) and                       {magic SR24}
              (byte3>6) and (byte3<maxlen) and                              {len}
-             (HexStrValueToInt(inlist[i+4].Split([sep])[1]) in ValidMsgTypes) then begin
+             (HexStrValueToInt(inlist[i+3].Split([sep])[1]) in ValidMsgTypes) then begin
             CheckIfFilterIsSetSR24;
             exit(3);
           end;
@@ -2073,9 +2087,9 @@ begin
     exit(false);
   result:=true;
   case rgMsgType.ItemIndex of
-    1: result:=msg[3]=2;
+    1: result:=(msg[3]=2) or (msg[3]=5);     {5: H920 Telemetry}
     2: result:=msg[3]=3;
-    3: result:=(msg[3]=0) or (msg[3]=1);                   {Only H920 + ST24}
+    3: result:=(msg[3]=0) or (msg[3]=1);     {1: Only possible with ST24}
     4: result:=msg[3]=20;                    {This is the interesting part!}
   end;
 end;
@@ -2435,6 +2449,7 @@ begin
   edOther.Text:='';
   cbOrOther.Checked:=false;
   StatusBar1.Panels[3].Text:='';
+  cbCheckCRC.Checked:=false;
 end;
 
 procedure TForm1.acHexViewExecute(Sender: TObject);
@@ -3011,7 +3026,7 @@ var
           actiontypelist.Add(Format('%.3d', [SR24data[4]]));
 
         if DoFilterSR24(SR24data) then begin
-          addlist_raw.Add(RawMessageToMergelist(SR24data, tp, LengthFixPartBC, cbRawWithCRC.Checked));
+          addlist_raw.Add(SR24RawMessageToMergelist(SR24data, tp, LengthFixPartBC, cbRawWithCRC.Checked));
           addlist_data.Add(SR24dataToMergelist(SR24data, tp));
         end;
         if (lineindex<inlist.Count) and
